@@ -1,0 +1,14 @@
+---
+
+- name: Install novnc
+  tags: [novnc]
+  include_tasks: novnc.yml
+
+- name: Install learners environment
+  tags: [learners]
+  include_tasks: learners.yml
+
+- name: Deploy exercise documentation
+  tags: [exercise, hugo]
+  include_tasks: exercise.yml
+

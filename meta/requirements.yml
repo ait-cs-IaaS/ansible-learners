@@ -1,0 +1,4 @@
+- src: https://github.com/ait-cs-IaaS/ansible-novnc.git
+  scm: git
+  version: master
+  name: novnc
