@@ -1,2 +1,57 @@
 ---
 learners_vhost: "localhost"
+
+learners_user: "learners"
+learners_usergroup: "{{ learners_user }}"
+
+learners_python_version: "3.8"
+
+learners_git:
+  user: "ait-cs-IaaS"
+  repo: "learners"
+  token: "{{ lookup('env', 'LEARNERS_ACCESS_TOKEN') }}"
+  branch: "master"
+  force: yes
+
+learners_base_packages: 
+  - "python{{ learners_python_version }}"
+  - "python3-venv"
+  - "python3-pip"
+  - "git"
+
+learners_paths:
+  base: "/opt/learners"
+  log: "/var/log/learners"
+
+
+
+learners_config:
+  # Common
+  DEBUG: False
+  TESTING: False
+  
+  # Appearance
+  THEME: "dark" 
+  BRANDING: True # display logos on start screen
+  
+  # Authentication
+  LEARNERS_HTPASSWD: "temp_htpasswd" # location of passwd file: e.g. "/etc/nginx/htpasswd"
+  JWT_SECRET_KEY: "53CR3T----"
+  JWT_TOKEN_LOCATION: ['headers', 'cookies']
+  JWT_ACCESS_TOKEN_DURATION: 120
+
+  # Database
+  SQLALCHEMY_DATABASE_URI: "sqlite:///learners_tracker.db"
+  
+  # CORS Management
+  CORS_HEADERS: "Content-Type"
+  CORS_ORIGINS: ['http://127.0.0.1:8888', 'http://localhost:8080', 'http://127.0.0.1:8080', 'http://localhost:8888']
+  CORS_SUPPORTS_CREDENTIALS: True
+
+  # Learners Components
+  VENJIX_URL:     "http://127.0.0.1:5001"
+  VNC_URL:        "https://placeholder_2@10.17.4.219/"
+  DOCS_URL:       "http://localhost:8080/en"
+  EXERCISES_URL:  "http://localhost:8888/en"
+  CALLBACK_URL:   "http://127.0.0.1:5000/callback"
+  

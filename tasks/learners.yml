@@ -1,0 +1,60 @@
+---
+
+# -------------------------------------------
+# *** Install Requirements ***
+# -------------------------------------------
+
+- name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
+  ansible.builtin.package:
+    name: "{{ learners_base_packages }}"
+    state: latest
+    update_cache: yes
+  become: yes
+
+# -------------------------------------------
+# *** Install Learners Environment ***
+# -------------------------------------------
+
+- name: Ensure learners paths exist
+  ansible.builtin.file:
+    path: "{{ item.value }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_usergroup }}"
+    state: directory
+  become: yes
+  loop: "{{ learners_paths | dict2items }}"
+
+- name: Clone learners repo
+  ansible.builtin.git:
+    repo: "https://\
+      {{ learners_git.token }}@github.com/\
+      {{ learners_git.user }}/\
+      {{ learners_git.repo }}.git"
+    dest: "{{ learners_paths.base }}"
+    version: "{{ learners_git.branch }}"
+    force: "{{ learners_git.force }}"
+    single_branch: yes
+  become: yes
+  become_user: "{{ learners_user }}"
+
+- name: Setup virtualenv
+  ansible.builtin.pip:
+    requirements: "{{ learners_paths.base }}/requirements.txt"
+    virtualenv: "{{ learners_paths.base }}/venv"
+    virtualenv_command: 'python3 -m venv'
+  become: yes
+  become_user: "{{ learners_user }}"
+
+- name: Setup learners config
+  ansible.builtin.template:
+    src: "learners_config.yml.j2"
+    dest: "{{ learners_paths.base }}/learners_config.yml"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: '0644'
+  become: yes
+  become_user: "{{ learners_user }}"
+
+- debug:
+    msg: "{{ breaker }}"
+
