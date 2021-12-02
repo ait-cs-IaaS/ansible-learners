@@ -1,3 +1,28 @@
-{% for key, value in learners_config.items() %}
-{{ key }}: {% if value is string %}"{{ value }}"{% else %}{{ value }}{% endif %}   
-{% endfor %}
+# Common
+DEBUG: {{ learners_config.DEBUG | default(False)}}
+TESTING: {{ learners_config.TESTING | default(False)}}
+
+# Appearance
+THEME: "{{ learners_config.THEME | default("dark") }}"
+BRANDING: {{ learners_config.BRANDING | default(True)}} # display logos on start screen
+
+# Authentication
+LEARNERS_HTPASSWD: "{{ learners_config.LEARNERS_HTPASSWD | default("/etc/nginx/htpasswd") }}" # location of passwd file: e.g. "/etc/nginx/htpasswd"
+JWT_SECRET_KEY: "{{ learners_config.JWT_SECRET_KEY | default( 999999999999999999995 | random | to_uuid ) }}"
+JWT_TOKEN_LOCATION: ['headers', 'cookies']
+JWT_ACCESS_TOKEN_DURATION: {{ learners_config.JWT_ACCESS_TOKEN_DURATION | default(120)}} 
+
+# Database
+SQLALCHEMY_DATABASE_URI: "{{ learners_config.SQLALCHEMY_DATABASE_URI | default("sqlite:///learners_tracker.db") }}"
+
+# CORS Management
+CORS_HEADERS: "Content-Type"
+CORS_ORIGINS: {{ learners_components.values() | list}}
+CORS_SUPPORTS_CREDENTIALS: True
+
+# Learners Components
+VENJIX_URL:     "{{ learners_components.VENJIX_URL }}"
+VNC_URL:        "{{ learners_components.VNC_URL }}" 
+DOCS_URL:       "{{ learners_components.DOCS_URL }}"
+EXERCISES_URL:  "{{ learners_components.EXERCISES_URL }}"
+CALLBACK_URL:   "{{ learners_components.CALLBACK_URL }}"
