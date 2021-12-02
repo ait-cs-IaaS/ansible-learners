@@ -1,0 +1,3 @@
+{% for key, value in learners_config.items() %}
+{{ key }}: {% if value is string %}"{{ value }}"{% else %}{{ value }}{% endif %}   
+{% endfor %}
