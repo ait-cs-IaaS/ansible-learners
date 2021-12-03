@@ -1,6 +1,8 @@
 ---
 learners_vhost: "localhost"
 
+LEARNERS_ACCESS_TOKEN: "{{ lookup('env', 'LEARNERS_ACCESS_TOKEN') }}"
+
 learners_user: "www-data"
 learners_usergroup: "{{ learners_user }}"
 
@@ -13,20 +15,19 @@ learners_python_version: "3.8"
 learners_git:
   user: "ait-cs-IaaS"
   repo: "learners"
-  token: "{{ lookup('env', 'LEARNERS_ACCESS_TOKEN') }}"
+  token: "{{ LEARNERS_ACCESS_TOKEN }}"
   branch: "master"
   force: yes
   always_reinstall: yes
 
 learners_base_packages: 
-  # base
   - "python{{ learners_python_version }}"
   - "python3-venv"
   - "python3-pip"
   - "git"
-  # webserver
+
+learners_nginx_packages:
   - "nginx"
-  # htpasswd
   - "python3-passlib"
   - "apache2-utils"
 
