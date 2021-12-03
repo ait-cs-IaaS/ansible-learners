@@ -50,6 +50,7 @@ learners_service_files:
     destination: "/etc/systemd/system/learners.socket"
 
 learners_service:
+  name: "{{ (learners_service_files.service['destination'] | basename | split('.service'))[0] }}"
   user: "{{ learners_user }}"
   group: "{{ learners_usergroup }}"
   RuntimeDirectory: "learners_runtime"
@@ -57,4 +58,8 @@ learners_service:
   ExecStart: >
     {{ learners_paths.base }}/venv/bin/gunicorn --workers 5 wsgi:app
     --pythonpath={{ learners_paths.base }}/venv/lib/python{{ learners_python_version }}
+  state: restarted
+  autostart: yes
+  reload: yes
+
   

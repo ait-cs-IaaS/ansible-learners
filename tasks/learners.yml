@@ -1,7 +1,7 @@
 ---
 
 # -------------------------------------------
-# *** Install Requirements ***
+# *** Pre-Requirements ***
 # -------------------------------------------
 
 - name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
@@ -10,10 +10,6 @@
     state: latest
     update_cache: yes
   become: yes
-
-# -------------------------------------------
-# *** Install Learners Environment ***
-# -------------------------------------------
 
 - name: Cleanup base directory for reinstall
   ansible.builtin.file:
@@ -30,6 +26,10 @@
     state: directory
   become: yes
   loop: "{{ learners_paths | dict2items }}"
+
+# -------------------------------------------
+# *** Install Learners Environment ***
+# -------------------------------------------
 
 - name: Clone learners repo
   ansible.builtin.git:
@@ -62,6 +62,11 @@
   become: yes
   become_user: "{{ learners_user }}"
 
+
+# -------------------------------------------
+# *** Service ***
+# -------------------------------------------
+
 - name: Deploy learners as service
   ansible.builtin.template:
     src: "{{ item.value['template'] }}"
@@ -71,5 +76,14 @@
   loop: "{{ learners_service_files | dict2items }}" 
   become: yes
 
-- debug:
-    msg: "{{ breaker }}"
+- name: "{{ learners_service.state }} Service: {{ learners_service.name }}"
+  systemd:
+    name: "{{ learners_service.name }}"
+    state: "{{ learners_service.state | default('started') }}"
+    enabled: "{{ learners_service.autostart }}"
+    daemon_reload: "{{ learners_service.reload | default('yes') }}"
+  become: yes
+
+
+# - debug:
+#     msg: "{{ breaker }}"
