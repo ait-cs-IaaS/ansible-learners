@@ -1,0 +1,20 @@
+# -------------------------------------------
+# *** Service ***
+# -------------------------------------------
+
+- name: Deploy learners as service
+  ansible.builtin.template:
+    src: "{{ item.value['template'] }}"
+    dest: "{{ item.value['destination'] }}"
+    owner: "root"
+    group: "root"
+  loop: "{{ learners_service_files | dict2items }}" 
+  become: yes
+
+- name: "{{ learners_service.state }} Service: {{ learners_service.name }}"
+  systemd:
+    name: "{{ learners_service.name }}"
+    state: "{{ learners_service.state | default('started') }}"
+    enabled: "{{ learners_service.autostart }}"
+    daemon_reload: "{{ learners_service.reload | default('yes') }}"
+  become: yes

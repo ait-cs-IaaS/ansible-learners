@@ -1,32 +1,3 @@
----
-
-# -------------------------------------------
-# *** Pre-Requirements ***
-# -------------------------------------------
-
-- name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
-  ansible.builtin.package:
-    name: "{{ learners_base_packages }}"
-    state: latest
-    update_cache: yes
-  become: yes
-
-- name: Cleanup base directory for reinstall
-  ansible.builtin.file:
-    path: "{{ learners_paths.base }}"
-    state: absent
-  become: yes
-  when: learners_git.always_reinstall
-
-- name: Ensure learners paths exist
-  ansible.builtin.file:
-    path: "{{ item.value }}"
-    owner: "{{ learners_user }}"
-    group: "{{ learners_usergroup }}"
-    state: directory
-  become: yes
-  loop: "{{ learners_paths | dict2items }}"
-
 # -------------------------------------------
 # *** Install Learners Environment ***
 # -------------------------------------------
@@ -61,36 +32,3 @@
     mode: '0644'
   become: yes
   become_user: "{{ learners_user }}"
-
-
-# -------------------------------------------
-# *** Service ***
-# -------------------------------------------
-
-- name: Deploy learners as service
-  ansible.builtin.template:
-    src: "{{ item.value['template'] }}"
-    dest: "{{ item.value['destination'] }}"
-    owner: "root"
-    group: "root"
-  loop: "{{ learners_service_files | dict2items }}" 
-  become: yes
-
-- name: "{{ learners_service.state }} Service: {{ learners_service.name }}"
-  systemd:
-    name: "{{ learners_service.name }}"
-    state: "{{ learners_service.state | default('started') }}"
-    enabled: "{{ learners_service.autostart }}"
-    daemon_reload: "{{ learners_service.reload | default('yes') }}"
-  become: yes
-
-# -------------------------------------------
-# *** nginx ***
-# -------------------------------------------
-
-- include: nginx.yml
-  tags: [nginx]
-
-
-# - debug:
-#     msg: "{{ breaker }}"

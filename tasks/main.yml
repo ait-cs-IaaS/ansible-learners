@@ -1,14 +1,49 @@
 ---
 
-# - name: Install novnc
-#   tags: [novnc]
-#   include_tasks: novnc.yml
+# -------------------------------------------
+# *** Pre-Requirements ***
+# -------------------------------------------
 
-- name: Install learners environment
-  tags: [learners]
-  include_tasks: learners.yml
+- name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
+  ansible.builtin.package:
+    name: "{{ learners_base_packages }}"
+    state: latest
+    update_cache: yes
+  become: yes
 
-# - name: Deploy exercise documentation
-#   tags: [exercise, hugo]
-#   include_tasks: exercise.yml
+- name: Cleanup base directory for reinstall
+  ansible.builtin.file:
+    path: "{{ learners_paths.base }}"
+    state: absent
+  become: yes
+  when: learners_git.always_reinstall
 
+- name: Ensure learners paths exist
+  ansible.builtin.file:
+    path: "{{ item.value }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_usergroup }}"
+    state: directory
+  become: yes
+  loop: "{{ learners_paths | dict2items }}"
+
+# -------------------------------------------
+# *** Install Learners Environment ***
+# -------------------------------------------
+
+- include: learners.yml
+  tags: [nginx]
+
+# -------------------------------------------
+# *** Service ***
+# -------------------------------------------
+
+- include: systemd.yml
+  tags: [nginx]
+
+# -------------------------------------------
+# *** nginx ***
+# -------------------------------------------
+
+- include: nginx.yml
+  tags: [nginx]

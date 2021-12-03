@@ -1,5 +1,9 @@
 ---
 
+# -------------------------------------------
+# *** nginx ***
+# -------------------------------------------
+
 - name: Remove default config
   ansible.builtin.file:
     path: "{{ item }}"
@@ -22,7 +26,7 @@
 
 - name: Ensure htpasswd credentials are configured
   community.general.htpasswd:
-    path: "/etc/nginx/htpasswd" #passwdfile
+    path: "/etc/nginx/htpasswd"
     name: "{{ item.key }}"
     password: "{{ item.value }}"
     owner: "root"
@@ -31,15 +35,3 @@
     mode: "0640"
   loop: "{{ htpasswd_credentials | dict2items }}"
   become: yes
-  # no_log: true
-
-# - name: Per User htpasswd
-#   htpasswd:
-#     path: "/etc/nginx/passwd-{{ item.name }}"
-#     name: "{{ item.name }}"
-#     password: "{{ item.password }}"
-#     owner: "root"
-#     group: "www-data"
-#     mode: "0640"
-#   with_items: "{{ htpasswd_credentials }}"
-#   no_log: true
