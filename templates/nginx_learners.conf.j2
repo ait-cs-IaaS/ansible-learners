@@ -1,0 +1,29 @@
+{% if learners_nginx.ssl_cert and learners_nginx.ssl_key %}
+server {
+  listen {{ learners_nginx.listen }};
+  server_name {{ learners_nginx.server_name }};
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+{% endif %}
+
+server {
+{% if learners_nginx.ssl_cert and learners_nginx.ssl_key %}
+  listen {{ learners_nginx.listen_ssl }};
+  ssl_certificate     {{ learners_nginx.ssl_cert }};
+  ssl_certificate_key {{ learners_nginx.ssl_key }};
+{% else %}
+  listen {{ learners_nginx.listen }};
+{% endif %}
+
+  server_name {{ learners_nginx.server_name }};
+  root        {{ learners_nginx.wwwroot }};
+
+  location / {
+            proxy_pass http://unix:{{ learners_service.socket }};
+            include proxy_params;
+        }
+
+}

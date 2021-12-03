@@ -30,8 +30,12 @@ learners_base_packages:
   - "python3-passlib"
   - "apache2-utils"
 
+htpasswd_credentials:
+  test: "{{ 'test' | password_hash('bcrypt') }}"
+  ben: "{{ 'ben' | password_hash('bcrypt') }}"
+
 learners_config:
-  LEARNERS_HTPASSWD: "temp_htpasswd" # location of passwd file: e.g. "/etc/nginx/htpasswd"
+  LEARNERS_HTPASSWD: "/etc/nginx/htpasswd"
   JWT_SECRET_KEY: "53CR3T"
 
 learners_components:
@@ -52,14 +56,24 @@ learners_service_files:
 learners_service:
   name: "{{ (learners_service_files.service['destination'] | basename | split('.service'))[0] }}"
   user: "{{ learners_user }}"
+  socket: "/run/learners.sock"
   group: "{{ learners_usergroup }}"
   RuntimeDirectory: "learners_runtime"
   WorkingDirectory: "{{ learners_paths.base }}"
   ExecStart: >
-    {{ learners_paths.base }}/venv/bin/gunicorn --workers 5 wsgi:app
+    {{ learners_paths.base }}/venv/bin/gunicorn 
+    --workers 5
+    wsgi:app
     --pythonpath={{ learners_paths.base }}/venv/lib/python{{ learners_python_version }}
   state: restarted
   autostart: yes
   reload: yes
 
+learners_nginx:
+  server_name: "learners.cyberrange.at"
+  listen: "80 default_server"
+  listen_ssl: "443 ssl default_server"
+  ssl_cert: ""
+  ssl_key: ""
+  wwwroot: "{{ learners_paths.base }}"
   

@@ -2,7 +2,7 @@
 Description=learners socket
 
 [Socket]
-ListenStream=/run/learners.sock
+ListenStream={{ learners_service.socket }}
 SocketUser={{ learners_service.user }}
 
 [Install]

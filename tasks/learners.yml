@@ -84,6 +84,13 @@
     daemon_reload: "{{ learners_service.reload | default('yes') }}"
   become: yes
 
+# -------------------------------------------
+# *** nginx ***
+# -------------------------------------------
+
+- include: nginx.yml
+  tags: [nginx]
+
 
 # - debug:
 #     msg: "{{ breaker }}"
