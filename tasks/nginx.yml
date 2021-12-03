@@ -4,6 +4,13 @@
 # *** nginx ***
 # -------------------------------------------
 
+- name: Ensure <{{ learners_nginx_packages | join(', ') }}> is installed
+  ansible.builtin.package:
+    name: "{{ learners_nginx_packages }}"
+    state: latest
+    update_cache: yes
+  become: yes
+
 - name: Remove default config
   ansible.builtin.file:
     path: "{{ item }}"
