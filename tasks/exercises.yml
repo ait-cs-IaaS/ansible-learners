@@ -1,0 +1,39 @@
+---
+
+- name: Ensure <{{ learners_exercises_packages | join(', ') }}> is installed
+  ansible.builtin.package:
+    name: "{{ learners_exercises_packages }}"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: Cleanup base directory for reinstall
+  ansible.builtin.file:
+    path: "{{ learners_exercises_paths.base }}"
+    state: absent
+  become: yes
+  when: learners_exercises_git.learners_exercises['always_reinstall']
+
+- name: Ensure exercises paths exist
+  ansible.builtin.file:
+    path: "{{ item.value }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_usergroup }}"
+    state: directory
+  become: yes
+  loop: "{{ learners_exercises_paths | dict2items }}"
+
+- name: Clone exercises repo
+  ansible.builtin.git:
+    repo: "https://\
+      {{ item.value['token'] }}@github.com/\
+      {{ item.value['user'] }}/\
+      {{ item.value['repo'] }}.git"
+    dest: "{{ item.value['dest'] }}"
+    version: "{{ item.value['branch'] }}"
+    force: "{{ item.value['force'] }}"
+    single_branch: yes
+    recursive: no
+  loop: "{{ learners_exercises_git | dict2items }}"
+  become: yes
+  become_user: "{{ learners_user }}"

@@ -1,0 +1,24 @@
+---
+
+learners_exercises_packages:
+  - "hugo"
+
+learners_exercises_paths:
+  base: "/var/www/exercises"
+
+learners_exercises_git:
+  learners_exercises:
+    user: "ait-cs-IaaS"
+    repo: "learners_exercises"
+    token: "{{ LEARNERS_ACCESS_TOKEN }}"
+    dest: "{{ learners_exercises_paths.base }}"
+    branch: "master"
+    force: yes
+    always_reinstall: yes
+  learners_theme:
+    user: "ait-cs-IaaS"
+    repo: "learners_theme"
+    token: "{{ LEARNERS_ACCESS_TOKEN }}"
+    dest: "{{ learners_exercises_paths.base }}/themes/learners"
+    branch: "master"
+    force: yes
