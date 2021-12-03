@@ -15,6 +15,13 @@
 # *** Install Learners Environment ***
 # -------------------------------------------
 
+- name: Cleanup base directory for reinstall
+  ansible.builtin.file:
+    path: "{{ learners_paths.base }}"
+    state: absent
+  become: yes
+  when: learners_git.always_reinstall
+
 - name: Ensure learners paths exist
   ansible.builtin.file:
     path: "{{ item.value }}"
@@ -55,6 +62,14 @@
   become: yes
   become_user: "{{ learners_user }}"
 
+- name: Deploy learners as service
+  ansible.builtin.template:
+    src: "{{ item.value['template'] }}"
+    dest: "{{ item.value['destination'] }}"
+    owner: "root"
+    group: "root"
+  loop: "{{ learners_service_files | dict2items }}" 
+  become: yes
+
 - debug:
     msg: "{{ breaker }}"
-

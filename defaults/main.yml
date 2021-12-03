@@ -1,8 +1,12 @@
 ---
 learners_vhost: "localhost"
 
-learners_user: "learners"
+learners_user: "www-data"
 learners_usergroup: "{{ learners_user }}"
+
+learners_paths:
+  base: "/var/www/learners"
+  log: "/var/log/learners"
 
 learners_python_version: "3.8"
 
@@ -12,18 +16,19 @@ learners_git:
   token: "{{ lookup('env', 'LEARNERS_ACCESS_TOKEN') }}"
   branch: "master"
   force: yes
+  always_reinstall: yes
 
 learners_base_packages: 
+  # base
   - "python{{ learners_python_version }}"
   - "python3-venv"
   - "python3-pip"
   - "git"
-
-learners_paths:
-  base: "/opt/learners"
-  log: "/var/log/learners"
-
-
+  # webserver
+  - "nginx"
+  # htpasswd
+  - "python3-passlib"
+  - "apache2-utils"
 
 learners_config:
   LEARNERS_HTPASSWD: "temp_htpasswd" # location of passwd file: e.g. "/etc/nginx/htpasswd"
@@ -35,4 +40,21 @@ learners_components:
   DOCS_URL:       "http://localhost:8080/en"
   EXERCISES_URL:  "http://localhost:8888/en"
   CALLBACK_URL:   "http://127.0.0.1:5000/callback"
+
+learners_service_files:
+  service:
+    template: "learners.service.j2"
+    destination: "/etc/systemd/system/learners.service"
+  socket:
+    template: "learners.socket.j2"
+    destination: "/etc/systemd/system/learners.socket"
+
+learners_service:
+  user: "{{ learners_user }}"
+  group: "{{ learners_usergroup }}"
+  RuntimeDirectory: "learners_runtime"
+  WorkingDirectory: "{{ learners_paths.base }}"
+  ExecStart: >
+    {{ learners_paths.base }}/venv/bin/gunicorn --workers 5 wsgi:app
+    --pythonpath={{ learners_paths.base }}/venv/lib/python{{ learners_python_version }}
   

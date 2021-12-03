@@ -14,6 +14,7 @@ JWT_ACCESS_TOKEN_DURATION: {{ learners_config.JWT_ACCESS_TOKEN_DURATION | defaul
 
 # Database
 SQLALCHEMY_DATABASE_URI: "{{ learners_config.SQLALCHEMY_DATABASE_URI | default("sqlite:///learners_tracker.db") }}"
+SQLALCHEMY_TRACK_MODIFICATIONS: False
 
 # CORS Management
 CORS_HEADERS: "Content-Type"

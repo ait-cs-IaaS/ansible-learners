@@ -1,0 +1,20 @@
+[Unit]
+Description=learners daemon
+Requires=learners.socket
+After=network.target
+
+[Service]
+Type=notify
+# the specific user that our service will run as
+User={{ learners_service.user }}
+Group={{ learners_service.group }}
+RuntimeDirectory={{ learners_service.RuntimeDirectory }}
+WorkingDirectory={{ learners_service.WorkingDirectory }}
+ExecStart={{ learners_service.ExecStart }}
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
