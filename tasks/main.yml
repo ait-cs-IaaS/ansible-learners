@@ -1,8 +1,31 @@
 ---
 
 # -------------------------------------------
-# *** Pre-Requirements ***
+# *** Prerequisites ***
 # -------------------------------------------
+
+- name: Set github access token
+  pause:
+    prompt: "Please enter the github access token"
+    echo: yes
+  register: access_token
+  when: not LEARNERS_ACCESS_TOKEN
+
+- name: Register Access Token
+  set_fact:
+    LEARNERS_ACCESS_TOKEN: "{{ access_token.user_input  }}"
+  when: access_token.user_input is defined
+
+
+- name: Adding "{{ learners_user }}" user
+  ansible.builtin.user:
+    name: "{{ learners_user }}"
+    group: "{{ learners_usergroup }}"
+    shell: /bin/bash
+    password: "{{ learners_user_password | password_hash('sha512') }}"
+    generate_ssh_key: yes
+  become: yes
+
 
 - name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
   ansible.builtin.package:
@@ -39,14 +62,14 @@
 # -------------------------------------------
 
 - include: learners.yml
-  tags: [nginx]
+  tags: [learners]
 
 # -------------------------------------------
 # *** Service ***
 # -------------------------------------------
 
 - include: systemd.yml
-  tags: [nginx]
+  tags: [systemd]
 
 # -------------------------------------------
 # *** nginx ***
