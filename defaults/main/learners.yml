@@ -5,6 +5,7 @@ LEARNERS_ACCESS_TOKEN: "{{ lookup('env', 'LEARNERS_ACCESS_TOKEN') }}"
 
 learners_user: "www-data"
 learners_usergroup: "{{ learners_user }}"
+learners_user_password: "password"
 
 learners_paths:
   base: "/var/www/learners"

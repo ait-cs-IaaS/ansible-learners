@@ -37,3 +37,16 @@
   loop: "{{ learners_exercises_git | dict2items }}"
   become: yes
   become_user: "{{ learners_user }}"
+
+- name: Build hugo static sites
+  ansible.builtin.command:
+    cmd: "hugo \
+    --contentDir='{{ item.value['path'] }}' \
+    --destination='{{ item.value['dest'] }}'"
+  args:
+    chdir: "{{ learners_exercises_paths.base }}"
+    creates: "{{ learners_exercises_paths.base }}/{{ item.value['dest'] }}"
+  become: yes
+  become_user: "{{ learners_user }}"
+  loop: "{{ learners_exercises | dict2items }}"
+  

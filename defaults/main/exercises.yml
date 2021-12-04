@@ -22,3 +22,13 @@ learners_exercises_git:
     dest: "{{ learners_exercises_paths.base }}/themes/learners"
     branch: "master"
     force: yes
+
+learners_exercises:
+  docs:
+    name: "documentation"
+    path: "content/documentation"
+    dest: "documentation_static"
+  exercises:
+    name: "exercises"
+    path: "content/exercises"
+    dest: "exercises_static"
