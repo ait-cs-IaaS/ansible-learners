@@ -23,12 +23,24 @@ learners_exercises_git:
     branch: "master"
     force: yes
 
-learners_exercises:
+learners_exercises_ssl:
+  cert: ""
+  key: ""
+
+learners_exercises_statics:
   docs:
     name: "documentation"
     path: "content/documentation"
     dest: "documentation_static"
+    listen: 8888
+    listen_ssl: 8888
+    wwwroot: "{{ learners_exercises_paths.base }}/documentation_static"
+    server_name: "documentation.cyberrange.com"
   exercises:
     name: "exercises"
     path: "content/exercises"
     dest: "exercises_static"
+    listen: 8080
+    listen_ssl: 8080
+    wwwroot: "{{ learners_exercises_paths.base }}/exercises_static"
+    server_name: "exercises.cyberrange.com"

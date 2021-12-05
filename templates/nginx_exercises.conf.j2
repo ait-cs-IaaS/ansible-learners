@@ -1,0 +1,35 @@
+{% if learners_exercises_ssl.cert and learners_exercises_ssl.key %}
+
+  {% for item in learners_exercises_statics | dict2items %}
+  
+        server {
+          listen {{ item.value['listen'] }};
+          server_name {{ item.value['server_name'] }};
+
+          location / {
+            return 301 https://$host$request_uri;
+          }
+        }
+
+  {% endfor %}
+
+{% endif %}
+
+
+{% for item in learners_exercises_statics | dict2items %}
+
+      server {
+      {% if learners_exercises_ssl.cert and learners_exercises_ssl.key %}
+        listen {{ item.value['listen_ssl'] }};
+        ssl_certificate     {{ learners_exercises_ssl.cert }};
+        ssl_certificate_key {{ learners_exercises_ssl.key }};
+      {% else %}
+        listen {{ item.value['listen'] }};
+      {% endif %}
+
+        server_name {{ item.value['server_name'] }};
+        root        {{ item.value['wwwroot'] }};
+
+      }
+
+{% endfor %}
