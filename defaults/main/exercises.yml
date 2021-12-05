@@ -12,6 +12,7 @@ learners_exercises_git:
     repo: "learners_exercises"
     token: "{{ LEARNERS_ACCESS_TOKEN }}"
     dest: "{{ learners_exercises_paths.base }}"
+    local_dest: "{{ role_path }}/templates/learners_exercises"
     branch: "master"
     force: yes
     always_reinstall: yes
@@ -20,6 +21,7 @@ learners_exercises_git:
     repo: "learners_theme"
     token: "{{ LEARNERS_ACCESS_TOKEN }}"
     dest: "{{ learners_exercises_paths.base }}/themes/learners"
+    local_dest: "{{ role_path }}/templates/learners_exercises/themes/learners"
     branch: "master"
     force: yes
 
@@ -32,15 +34,15 @@ learners_exercises_statics:
     name: "documentation"
     path: "content/documentation"
     dest: "documentation_static"
-    listen: 8888
-    listen_ssl: 8888
+    listen: 8080
+    listen_ssl: 8080
     wwwroot: "{{ learners_exercises_paths.base }}/documentation_static"
     server_name: "documentation.cyberrange.com"
   exercises:
     name: "exercises"
     path: "content/exercises"
     dest: "exercises_static"
-    listen: 8080
-    listen_ssl: 8080
+    listen: 8888
+    listen_ssl: 8888
     wwwroot: "{{ learners_exercises_paths.base }}/exercises_static"
     server_name: "exercises.cyberrange.com"

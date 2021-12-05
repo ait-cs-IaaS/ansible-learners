@@ -23,20 +23,42 @@
   loop: "{{ learners_exercises_paths | dict2items }}"
   become: yes
 
-- name: Clone exercises repo
+# - name: Clone exercises repo
+#   ansible.builtin.git:
+#     repo: "https://\
+#       {{ item.value['token'] }}@github.com/\
+#       {{ item.value['user'] }}/\
+#       {{ item.value['repo'] }}.git"
+#     dest: "{{ item.value['dest'] }}"
+#     version: "{{ item.value['branch'] }}"
+#     force: "{{ item.value['force'] }}"
+#     single_branch: yes
+#     recursive: no
+#   loop: "{{ learners_exercises_git | dict2items }}"
+#   become: yes
+#   become_user: "{{ learners_user }}"
+
+
+# Clone it to localhost in order to customize it and deploy it per user:
+- name: Clone exercises repo to local directory
+  connection : local
   ansible.builtin.git:
     repo: "https://\
       {{ item.value['token'] }}@github.com/\
       {{ item.value['user'] }}/\
       {{ item.value['repo'] }}.git"
-    dest: "{{ item.value['dest'] }}"
+    dest: "{{ item.value['local_dest'] }}"
     version: "{{ item.value['branch'] }}"
     force: "{{ item.value['force'] }}"
     single_branch: yes
     recursive: no
   loop: "{{ learners_exercises_git | dict2items }}"
   become: yes
-  become_user: "{{ learners_user }}"
+  become_user: "{{ ansible_user }}"
+
+#! Upload customized files
+- debug:
+    msg: "{{ break here }}"
 
 - name: Build hugo static sites
   ansible.builtin.command:
