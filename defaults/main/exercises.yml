@@ -5,6 +5,7 @@ learners_exercises_packages:
 
 learners_exercises_paths:
   base: "/var/www/exercises"
+  repo: "/var/www/exercises/repo"
 
 custom_start_tag: "{{ '{{' }}%"
 custom_end_tag: "%{{ '}}' }}"
@@ -14,7 +15,7 @@ learners_exercises_git:
     user: "ait-cs-IaaS"
     repo: "learners_exercises"
     token: "{{ LEARNERS_ACCESS_TOKEN }}"
-    dest: "{{ learners_exercises_paths.base }}"
+    dest: "{{ learners_exercises_paths.repo }}"
     local_dest: "{{ role_path }}/templates/learners_exercises"
     branch: "master"
     force: yes
@@ -23,7 +24,7 @@ learners_exercises_git:
     user: "ait-cs-IaaS"
     repo: "learners_theme"
     token: "{{ LEARNERS_ACCESS_TOKEN }}"
-    dest: "{{ learners_exercises_paths.base }}/themes/learners"
+    dest: "{{ learners_exercises_paths.repo }}/themes/learners"
     local_dest: "{{ role_path }}/templates/learners_exercises/themes/learners"
     branch: "master"
     force: yes
@@ -36,16 +37,32 @@ learners_exercises_statics:
   docs:
     name: "documentation"
     path: "content/documentation"
-    dest: "documentation_static"
-    listen: 8080
-    listen_ssl: 8080
-    wwwroot: "{{ learners_exercises_paths.base }}/documentation_static"
-    server_name: "documentation.cyberrange.com"
+    dest: "docs"
   exercises:
     name: "exercises"
     path: "content/exercises"
-    dest: "exercises_static"
-    listen: 8888
-    listen_ssl: 8888
-    wwwroot: "{{ learners_exercises_paths.base }}/exercises_static"
-    server_name: "exercises.cyberrange.com"
+    dest: "exercises"
+  
+learners_exercises_nginx:
+  ben:
+    docs:
+      listen: 8001
+      listen_ssl: 8001
+      wwwroot: "docs"
+      server_name: "docs_ben.cyberrange.com"
+    exercises:
+      listen: 9001
+      listen_ssl: 9001
+      wwwroot: "exercises"
+      server_name: "exercises_ben.cyberrange.com"
+  test:
+    docs:
+      listen: 8002
+      listen_ssl: 8002
+      wwwroot: "docs"
+      server_name: "docs_test.cyberrange.com"
+    exercises:
+      listen: 9002
+      listen_ssl: 9002
+      wwwroot: "exercises"
+      server_name: "exercises_test.cyberrange.com"

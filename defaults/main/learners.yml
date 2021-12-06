@@ -35,7 +35,7 @@ learners_nginx_packages:
   - "python3-passlib"
   - "apache2-utils"
 
-htpasswd_credentials:
+learners_userlist:
   test: "{{ 'test' | password_hash('bcrypt') }}"
   ben: "{{ 'ben' | password_hash('bcrypt') }}"
 
@@ -46,8 +46,8 @@ learners_config:
 learners_components:
   VENJIX_URL:     "http://127.0.0.1:5001"
   VNC_URL:        "https://placeholder_2@10.17.4.219/"
-  DOCS_URL:       "http://{{ learners_base_ip }}:8080/en"
-  EXERCISES_URL:  "http://{{ learners_base_ip }}:8888/en"
+  DOCS_URL:       "http://{{ learners_base_ip }}:8080"
+  EXERCISES_URL:  "http://{{ learners_base_ip }}:8888"
   CALLBACK_URL:   "http://{{ learners_base_ip }}:5000/callback"
 
 learners_service_files:

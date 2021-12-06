@@ -52,5 +52,5 @@
     group: "www-data"
     crypt_scheme: plaintext # must be encrypted prior
     mode: "0640"
-  loop: "{{ htpasswd_credentials | dict2items }}"
+  loop: "{{ learners_userlist | dict2items }}"
   become: yes
