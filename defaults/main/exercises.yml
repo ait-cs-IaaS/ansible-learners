@@ -25,7 +25,6 @@ learners_exercises_git:
     repo: "learners_theme"
     token: "{{ LEARNERS_ACCESS_TOKEN }}"
     dest: "{{ learners_exercises_paths.repo }}/themes/learners"
-    local_dest: "{{ role_path }}/templates/learners_exercises/themes/learners"
     branch: "master"
     force: yes
 
@@ -35,34 +34,22 @@ learners_exercises_ssl:
 
 learners_exercises_statics:
   docs:
-    name: "documentation"
-    path: "content/documentation"
+    name: "docs"
+    path: "content/docs"
     dest: "docs"
   exercises:
     name: "exercises"
     path: "content/exercises"
     dest: "exercises"
   
-learners_exercises_nginx:
+learners_exercises_serverconfig:
   ben:
     docs:
-      listen: 8001
-      listen_ssl: 8001
-      wwwroot: "docs"
-      server_name: "docs_ben.cyberrange.com"
+      port: 8001
     exercises:
-      listen: 9001
-      listen_ssl: 9001
-      wwwroot: "exercises"
-      server_name: "exercises_ben.cyberrange.com"
+      port: 9001
   test:
     docs:
-      listen: 8002
-      listen_ssl: 8002
-      wwwroot: "docs"
-      server_name: "docs_test.cyberrange.com"
+      port: 8002
     exercises:
-      listen: 9002
-      listen_ssl: 9002
-      wwwroot: "exercises"
-      server_name: "exercises_test.cyberrange.com"
+      port: 9002

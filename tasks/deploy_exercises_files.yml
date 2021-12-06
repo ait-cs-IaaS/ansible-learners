@@ -20,7 +20,7 @@
         item.path | splitext | last == '.md'
   become: yes
   become_user: "{{ learners_user }}"
-  ignore_errors: yes
+  no_log: True
 
 - name: Build {{ username }}'s static site
   ansible.builtin.command:

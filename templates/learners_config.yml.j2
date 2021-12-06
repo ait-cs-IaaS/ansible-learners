@@ -30,9 +30,9 @@ CALLBACK_URL:   "{{ learners_components.CALLBACK_URL }}"
 
 # User-dependent Ports
 PORT_LIST: 
-{% for dict_entry in learners_exercises_nginx | dict2items %}
+{% for dict_entry in learners_exercises_serverconfig | dict2items %}
   {{ dict_entry.key }}:
 {% for type_entry in dict_entry.value | dict2items %}
-    {{ type_entry.key }}: "{{ type_entry.value['listen'] }}"      
+    {{ type_entry.key }}: "{{ type_entry.value['port'] }}"      
 {% endfor %}
 {% endfor %}

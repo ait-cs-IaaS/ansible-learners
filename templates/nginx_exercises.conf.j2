@@ -1,42 +1,47 @@
 {% if learners_exercises_ssl.cert and learners_exercises_ssl.key %}
 
-{% for dict_entry in learners_exercises_nginx | dict2items %}
-  
-  {% for type_entry in dict_entry.value | dict2items %}
+  {% for dict_entry in learners_exercises_serverconfig | dict2items %}  
+    {% for type_entry in dict_entry.value | dict2items %}
 
-        server {
-          listen {{ type_entry.listen }};
-          server_name {{ type_entry.value['server_name'] }};
+  server {
+    listen {{ type_entry.value['port'] }};
+    server_name {{ type_entry.value['server_name'] }};
 
-          location / {
-            return 301 https://$host$request_uri;
-          }
-        }
+    location / {
+      return 301 https://$host$request_uri;
+    }
+  }
 
     {% endfor %}
   {% endfor %}
-
 {% endif %}
 
 
-{% for dict_entry in learners_exercises_nginx | dict2items %}
-  
+{% for dict_entry in learners_exercises_serverconfig | dict2items %}
   {% for type_entry in dict_entry.value | dict2items %}
 
-      server {
-      {% if learners_exercises_ssl.cert and learners_exercises_ssl.key %}
-        listen {{ type_entry.value['listen_ssl'] }};
-        ssl_certificate     {{ learners_exercises_ssl.cert }};
-        ssl_certificate_key {{ learners_exercises_ssl.key }};
-      {% else %}
-        listen {{ type_entry.value['listen'] }};
-      {% endif %}
-
-        server_name {{ type_entry.value['server_name'] }};
-        root        {{ learners_exercises_paths.base }}/users_static/{{ dict_entry.key }}/{{ type_entry.value['wwwroot'] }};
-
-      }
+  server {
+    {# LISTEN PORT #}
+    {% if learners_exercises_ssl.cert and learners_exercises_ssl.key %}
+      listen {{ type_entry.value['port'] }};
+      ssl_certificate {{ learners_exercises_ssl.cert }};
+      ssl_certificate_key {{ learners_exercises_ssl.key }};
+    {% else %}
+      listen {{ type_entry.value['port'] }};
+    {% endif %}
+    {# SERVER NAME #}
+    {% if type_entry.value['server_name'] is defined %}
+      server_name {{ type_entry.value['server_name'] }};
+    {% else %}
+      server_name {{ dict_entry.key }}_{{ type_entry.key }}.cyberrange.com;
+    {% endif %}
+    {# DOCUMENT ROOT #}
+    {% if type_entry.value['wwwroot'] is defined %}
+      root {{ learners_exercises_paths.base }}/users_static/{{ dict_entry.key }}/{{ type_entry.value['wwwroot'] }};
+    {% else %}
+      root {{ learners_exercises_paths.base }}/users_static/{{ dict_entry.key }}/{{ type_entry.key }};
+    {% endif %}
+  }
       
   {% endfor %}
-
 {% endfor %}
