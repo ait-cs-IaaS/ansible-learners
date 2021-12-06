@@ -43,6 +43,15 @@
 # *** Local Templating ***
 # -------------------------------------------
 
+- name: Cleanup local templates
+  connection : local
+  ansible.builtin.file:
+    path: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}"
+    state: absent
+  when: learners_exercises_git.learners_exercises['always_reinstall']
+  become: yes
+  become_user: "{{ ansible_user }}"
+
 - name: Clone exercises repo to local directory
   connection : local
   ansible.builtin.git:
@@ -105,40 +114,60 @@
 # *** Deploy to target host ***
 # -------------------------------------------
 
-- name: Deploy exercises files
-  ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ learners_exercises_paths.base }}/{{ item.path }}"
+
+- name: Ensure exercises paths exist
+  ansible.builtin.file:
+    path: "{{learners_exercises_paths.base }}/users"
     owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    mode: 0644
-  with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
-  when: item.state == 'file' and 
-        item.path | splitext | last == '.md'
+    group: "{{ learners_usergroup }}"
+    state: directory
   become: yes
-  become_user: "{{ learners_user }}"
-  ignore_errors: yes
+
+- name: Deploy exercises files per user
+  include:  deploy_exercises_files.yml 
+            username={{ user.key }} 
+  loop: "{{ learners_userlist | dict2items }}"
+  loop_control:
+   loop_var: user
+
+# - debug:
+#     msg: "{{ breaker }}"
+
+# - name: Deploy exercises files
+#   ansible.builtin.template:
+#     src: "{{ item.src }}"
+#     dest: "{{ learners_exercises_paths.base }}/{{ item.path }}"
+#     owner: "{{ learners_user }}"
+#     group: "{{ learners_user }}"
+#     mode: 0644
+#   with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
+#   when: item.state == 'file' and 
+#         item.path | splitext | last == '.md'
+#   become: yes
+#   become_user: "{{ learners_user }}"
+#   ignore_errors: yes
+
+
 
 - name: Cleanup local templates
   connection : local
   ansible.builtin.file:
     path: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}"
     state: absent
-  when: learners_exercises_git.learners_exercises['always_reinstall']
   become: yes
   become_user: "{{ ansible_user }}"
 
-- name: Build hugo static sites
-  ansible.builtin.command:
-    cmd: "hugo \
-    --contentDir='{{ item.value['path'] }}' \
-    --destination='{{ item.value['dest'] }}'"
-  args:
-    chdir: "{{ learners_exercises_paths.base }}"
-    creates: "{{ learners_exercises_paths.base }}/{{ item.value['dest'] }}"
-  loop: "{{ learners_exercises_statics | dict2items }}"
-  become: yes
-  become_user: "{{ learners_user }}"
+# - name: Build hugo static sites
+#   ansible.builtin.command:
+#     cmd: "hugo \
+#     --contentDir='{{ item.value['path'] }}' \
+#     --destination='{{ item.value['dest'] }}'"
+#   args:
+#     chdir: "{{ learners_exercises_paths.base }}"
+#     creates: "{{ learners_exercises_paths.base }}/{{ item.value['dest'] }}"
+#   loop: "{{ learners_exercises_statics | dict2items }}"
+#   become: yes
+#   become_user: "{{ learners_user }}"
   
 - name: Add NGINX configuration file
   ansible.builtin.template:

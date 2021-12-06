@@ -1,0 +1,35 @@
+
+- name: Copy base files for {{ username }}
+  ansible.builtin.copy:
+    remote_src: yes
+    src: "{{ learners_exercises_paths.repo }}/content"
+    dest: "{{ learners_exercises_paths.base }}/users/{{ username }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+  become: yes
+
+- name: Deploy {{ username }}'s exercises files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ learners_exercises_paths.base }}/users/{{ username }}/{{ item.path }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0644
+  with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
+  when: item.state == 'file' and 
+        item.path | splitext | last == '.md'
+  become: yes
+  become_user: "{{ learners_user }}"
+  ignore_errors: yes
+
+- name: Build {{ username }}'s static site
+  ansible.builtin.command:
+    cmd: "hugo \
+    --contentDir='{{ learners_exercises_paths.base }}/users/{{ username }}/{{ item.value['path'] }}' \
+    --destination='{{ learners_exercises_paths.base }}/users_static/{{username}}/{{ item.value['dest'] }}'"
+  args:
+    chdir: "{{ learners_exercises_paths.repo }}"
+    creates: "{{ learners_exercises_paths.base }}/users_static/{{username}}/{{ item.value['dest'] }}"
+  loop: "{{ learners_exercises_statics | dict2items }}"
+  become: yes
+  become_user: "{{ learners_user }}"
