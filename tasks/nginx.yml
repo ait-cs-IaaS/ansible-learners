@@ -20,25 +20,3 @@
     - "/etc/nginx/conf.d"
   become: yes
   notify: restart nginx
-
-- name: Add NGINX configuration file
-  ansible.builtin.template:
-    src: nginx_learners.conf.j2
-    dest: /etc/nginx/sites-enabled/learners.conf
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    mode: 0644
-  become: yes
-  notify: restart nginx
-
-- name: Ensure htpasswd credentials are configured
-  community.general.htpasswd:
-    path: "/etc/nginx/htpasswd"
-    name: "{{ item.key }}"
-    password: "{{ item.value }}"
-    owner: "root"
-    group: "www-data"
-    crypt_scheme: plaintext # must be encrypted prior
-    mode: "0640"
-  loop: "{{ htpasswd_credentials | dict2items }}"
-  become: yes
