@@ -6,6 +6,9 @@ learners_exercises_packages:
 learners_exercises_paths:
   base: "/var/www/exercises"
 
+custom_start_tag: "{{ '{{' }}%"
+custom_end_tag: "%{{ '}}' }}"
+
 learners_exercises_git:
   learners_exercises:
     user: "ait-cs-IaaS"

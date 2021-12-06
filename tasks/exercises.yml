@@ -23,42 +23,110 @@
   loop: "{{ learners_exercises_paths | dict2items }}"
   become: yes
 
-# - name: Clone exercises repo
-#   ansible.builtin.git:
-#     repo: "https://\
-#       {{ item.value['token'] }}@github.com/\
-#       {{ item.value['user'] }}/\
-#       {{ item.value['repo'] }}.git"
-#     dest: "{{ item.value['dest'] }}"
-#     version: "{{ item.value['branch'] }}"
-#     force: "{{ item.value['force'] }}"
-#     single_branch: yes
-#     recursive: no
-#   loop: "{{ learners_exercises_git | dict2items }}"
-#   become: yes
-#   become_user: "{{ learners_user }}"
-
-
-# Clone it to localhost in order to customize it and deploy it per user:
-- name: Clone exercises repo to local directory
-  connection : local
+- name: Clone exercises repo to target host
   ansible.builtin.git:
     repo: "https://\
       {{ item.value['token'] }}@github.com/\
       {{ item.value['user'] }}/\
       {{ item.value['repo'] }}.git"
-    dest: "{{ item.value['local_dest'] }}"
+    dest: "{{ item.value['dest'] }}"
     version: "{{ item.value['branch'] }}"
     force: "{{ item.value['force'] }}"
     single_branch: yes
     recursive: no
   loop: "{{ learners_exercises_git | dict2items }}"
   become: yes
+  become_user: "{{ learners_user }}"
+
+
+# -------------------------------------------
+# *** Local Templating ***
+# -------------------------------------------
+
+- name: Clone exercises repo to local directory
+  connection : local
+  ansible.builtin.git:
+    repo: "https://\
+      {{ learners_exercises_git.learners_exercises['token'] }}@github.com/\
+      {{ learners_exercises_git.learners_exercises['user'] }}/\
+      {{ learners_exercises_git.learners_exercises['repo'] }}.git"
+    dest: "{{ learners_exercises_git.learners_exercises['local_dest'] }}"
+    version: "{{ learners_exercises_git.learners_exercises['branch'] }}"
+    force: "{{ learners_exercises_git.learners_exercises['force'] }}"
+    single_branch: yes
+    recursive: no
+  become: yes
   become_user: "{{ ansible_user }}"
 
-#! Upload customized files
-- debug:
-    msg: "{{ break here }}"
+- name: Only keep content
+  connection : local
+  block:
+    - ansible.builtin.find:
+        path: "{{ role_path }}/templates/\
+          {{ learners_exercises_git.learners_exercises['repo'] }}"
+        file_type: any
+        hidden: yes
+        excludes: "content"
+      register: found_files
+    - ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ found_files['files'] }}"
+  become: yes
+  become_user: "{{ ansible_user }}"
+  no_log: True
+
+# -------------------------------------------
+# Temporarly replace custom tags to allow ansible templating 
+# -------------------------------------------
+
+- name: Replace custom start tags
+  connection : local
+  ansible.builtin.replace:
+    path: "{{ item.src }}"
+    regexp: "{{ '{{' }}%"
+    replace: "{{ '{{' }} custom_start_tag {{ '}}' }}"
+  with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
+  when: item.state == 'file'
+  no_log: True
+
+- name: Replace custom end tags
+  connection : local
+  ansible.builtin.replace:
+    path: "{{ item.src }}"
+    regexp: "%{{ '}}' }}"
+    replace: "{{ '{{' }} custom_end_tag {{ '}}' }}"
+  with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
+  when: item.state == 'file'
+  no_log: True
+
+
+# -------------------------------------------
+# *** Deploy to target host ***
+# -------------------------------------------
+
+- name: Deploy exercises files
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ learners_exercises_paths.base }}/{{ item.path }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0644
+  with_filetree: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}/"
+  when: item.state == 'file' and 
+        item.path | splitext | last == '.md'
+  become: yes
+  become_user: "{{ learners_user }}"
+  ignore_errors: yes
+
+- name: Cleanup local templates
+  connection : local
+  ansible.builtin.file:
+    path: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}"
+    state: absent
+  when: learners_exercises_git.learners_exercises['always_reinstall']
+  become: yes
+  become_user: "{{ ansible_user }}"
 
 - name: Build hugo static sites
   ansible.builtin.command:
