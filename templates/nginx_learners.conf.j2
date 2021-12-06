@@ -21,6 +21,16 @@ server {
   server_name {{ learners_nginx.server_name }};
   root        {{ learners_nginx.wwwroot }};
 
+
+  add_header Access-Control-Allow-Origin "{{ learners_components.VENJIX_URL }}";
+  add_header Access-Control-Allow-Origin "{{ learners_components.VNC_URL }}";
+  add_header Access-Control-Allow-Origin "{{ learners_components.CALLBACK_URL }}";
+{% for dict_entry in learners_exercises_serverconfig | dict2items %}
+  add_header Access-Control-Allow-Origin "{{ learners_components.DOCS_URL }}:{{ dict_entry.value['docs'].port }}";
+  add_header Access-Control-Allow-Origin "{{ learners_components.EXERCISES_URL }}:{{ dict_entry.value['exercises'].port }}";
+{% endfor %}
+
+
   location / {
             proxy_pass http://unix:{{ learners_service.socket }};
             include proxy_params;
