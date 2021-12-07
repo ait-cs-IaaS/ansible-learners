@@ -1,0 +1,28 @@
+
+learners_base_ip: "{{ ansible_enp0s8.ipv4.address }}"
+
+learners_addresses:
+  venjix: "{{ learners_base_ip }}"
+  learners: "{{ learners_base_ip }}"
+  docs: "{{ learners_base_ip }}"
+  exercises: "{{ learners_base_ip }}"
+  vnc: "placeholder_2@10.17.4.219/"
+
+learners_ports:
+  venjix: 5000
+  learners: 8000
+
+learners_components:
+  VENJIX_URL: "\
+    {{ learners_addresses.venjix }}:\
+    {{ learners_ports.venjix }}"
+  DOCS_URL: "{{ learners_addresses.docs }}"
+  EXERCISES_URL: "{{ learners_addresses.exercises }}"
+  LEARNERS_URL: "\
+    {{ learners_addresses.learners }}:\
+    {{ learners_ports.learners }}"
+  CALLBACK_URL: "\
+    {{ learners_addresses.learners }}:\
+    {{ learners_ports.learners }}\
+    /callback"
+  VNC_URL: "{{ learners_addresses.vnc }}"

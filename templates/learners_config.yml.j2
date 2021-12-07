@@ -18,15 +18,15 @@ SQLALCHEMY_TRACK_MODIFICATIONS: False
 
 # CORS Management
 CORS_HEADERS: "Content-Type"
-CORS_ORIGINS: {{ learners_components.values() | list}}
+CORS_ORIGINS: "*"
 CORS_SUPPORTS_CREDENTIALS: True
 
 # Learners Components
-VENJIX_URL:     "{{ learners_components.VENJIX_URL }}"
-VNC_URL:        "{{ learners_components.VNC_URL }}" 
-DOCS_URL:       "{{ learners_components.DOCS_URL }}"
-EXERCISES_URL:  "{{ learners_components.EXERCISES_URL }}"
-CALLBACK_URL:   "{{ learners_components.CALLBACK_URL }}"
+VENJIX_URL:     "http://{{ learners_components.VENJIX_URL }}"
+DOCS_URL:       "http://{{ learners_components.DOCS_URL }}"
+EXERCISES_URL:  "http://{{ learners_components.EXERCISES_URL }}"
+CALLBACK_URL:   "http://{{ learners_components.CALLBACK_URL }}"
+VNC_URL:        "https://{{ learners_components.VNC_URL }}" 
 
 # User-dependent Ports
 PORT_LIST: 

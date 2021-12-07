@@ -1,3 +1,9 @@
+---
+
+# -------------------------------------------
+# *** Variables used in exercise templates ***
+# -------------------------------------------
+
 exercises_template_var: "test var"
 
 exercises_template_ip:

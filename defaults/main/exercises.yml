@@ -1,11 +1,27 @@
 ---
 
-learners_exercises_packages:
-  - "hugo"
+learners_user: "www-data"
+learners_usergroup: "{{ learners_user }}"
+learners_user_password: "password"
+
+GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
 
 learners_exercises_paths:
   base: "/var/www/exercises"
   repo: "/var/www/exercises/repo"
+
+learners_exercises_packages:
+  - "hugo"
+  - "git"
+
+learners_nginx_packages:
+  - "nginx"
+  - "python3-passlib"
+  - "apache2-utils"
+
+learners_userlist:
+  test: "{{ 'test' | password_hash('bcrypt') }}"
+  test2: "{{ 'test2' | password_hash('bcrypt') }}"
 
 custom_start_tag: "{{ '{{' }}%"
 custom_end_tag: "%{{ '}}' }}"
@@ -14,7 +30,7 @@ learners_exercises_git:
   learners_exercises:
     user: "ait-cs-IaaS"
     repo: "learners_exercises"
-    token: "{{ LEARNERS_ACCESS_TOKEN }}"
+    token: "{{ GIT_ACCESS_TOKEN }}"
     dest: "{{ learners_exercises_paths.repo }}"
     local_dest: "{{ role_path }}/templates/learners_exercises"
     branch: "master"
@@ -23,7 +39,7 @@ learners_exercises_git:
   learners_theme:
     user: "ait-cs-IaaS"
     repo: "learners_theme"
-    token: "{{ LEARNERS_ACCESS_TOKEN }}"
+    token: "{{ GIT_ACCESS_TOKEN }}"
     dest: "{{ learners_exercises_paths.repo }}/themes/learners"
     branch: "master"
     force: yes
@@ -32,10 +48,15 @@ learners_exercises_ssl:
   cert: ""
   key: ""
 
+learners_ip_replacements:
+  url_getCurrentState: "http://{{ learners_addresses.learners }}/current_state/"
+  url_executeExercise: "http://{{ learners_addresses.learners }}/execute_script/"
+  url_checkCompleted: "http://{{ learners_addresses.learners }}/check_completion/"
+
 learners_exercises_statics:
   docs:
     name: "docs"
-    path: "content/docs"
+    path: "content/documentation"
     dest: "docs"
   exercises:
     name: "exercises"
