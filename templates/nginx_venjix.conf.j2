@@ -1,0 +1,30 @@
+{% if venjix_nginx.ssl_cert and venjix_nginx.ssl_key %}
+server {
+  listen {{ venjix_nginx.listen }};
+  server_name {{ venjix_nginx.server_name }};
+
+  location / {
+    return 301 https://$host$request_uri;
+  }
+}
+{% endif %}
+
+server {
+{% if venjix_nginx.ssl_cert and venjix_nginx.ssl_key %}
+  listen {{ venjix_nginx.listen_ssl }};
+  ssl_certificate     {{ venjix_nginx.ssl_cert }};
+  ssl_certificate_key {{ venjix_nginx.ssl_key }};
+{% else %}
+  listen {{ venjix_nginx.listen }};
+{% endif %}
+
+  server_name {{ venjix_nginx.server_name }};
+  root        {{ venjix_nginx.wwwroot }};
+
+
+  location / {
+            proxy_pass http://unix:{{ flask_service.socket }};
+            include proxy_params;
+        }
+
+}

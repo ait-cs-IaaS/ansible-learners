@@ -1,0 +1,83 @@
+---
+flask_app_name: "learners"
+
+flask_paths:
+  base: "/var/www/learners"
+  log: "/var/log/learners"
+
+flask_python_version: "3.8"
+
+flask_git:
+  user: "ait-cs-IaaS"
+  repo: "learners"
+  token: "{{ GIT_ACCESS_TOKEN }}"
+  branch: "master"
+  force: yes
+  always_reinstall: yes
+
+# -------------------------------------------
+# *** Learners config template ***
+# -------------------------------------------
+
+flask_config:
+  src: "learners_config.yml.j2"
+  dest: "{{ flask_paths.base }}/learners_config.yml"
+
+learners_config:
+  LEARNERS_HTPASSWD: "/etc/nginx/htpasswd"
+  JWT_SECRET_KEY: "53CR3T"
+
+# -------------------------------------------
+# *** Learners NGINX template ***
+# -------------------------------------------
+
+flask_nginx:
+  src: "nginx_learners.conf.j2"
+  dest: "/etc/nginx/sites-enabled/learners.conf"
+
+learners_nginx:
+  server_name: "learners.cyberrange.at"
+  listen: "80 default_server"
+  listen_ssl: "443 ssl default_server"
+  ssl_cert: ""
+  ssl_key: ""
+  wwwroot: "{{ flask_paths.base }}"
+  
+# -------------------------------------------
+# *** Learners HTPASSWD ***
+# -------------------------------------------
+
+flask_userlist:
+  test: "{{ 'test' | password_hash('bcrypt') }}"
+  ben: "{{ 'ben' | password_hash('bcrypt') }}"
+  
+# -------------------------------------------
+# *** Learners Service ***
+# -------------------------------------------
+
+flask_service_files:
+  service:
+    template: "flask.service.j2"
+    destination: "/etc/systemd/system/learners.service"
+  socket:
+    template: "flask.socket.j2"
+    destination: "/etc/systemd/system/learners.socket"
+
+flask_service:
+  name: "{{ (flask_service_files.service['destination'] | basename | split('.service'))[0] }}"
+  description: "learners"
+  requires: "learners.socket"
+  user: "{{ flask_user }}"
+  socket: "/run/learners.sock"
+  group: "{{ flask_usergroup }}"
+  RuntimeDirectory: "learners_runtime"
+  WorkingDirectory: "{{ flask_paths.base }}"
+  ExecStart: >
+    {{ flask_paths.base }}/venv/bin/gunicorn 
+    --workers 5
+    wsgi:app
+    -b 127.0.0.1:{{ learners_ports.learners }}
+    --pythonpath={{ flask_paths.base }}/venv/lib/python{{ flask_python_version }}
+  state: restarted
+  autostart: yes
+  reload: yes

@@ -1,9 +1,0 @@
-[Unit]
-Description=learners socket
-
-[Socket]
-ListenStream={{ learners_service.socket }}
-SocketUser={{ learners_service.user }}
-
-[Install]
-WantedBy=sockets.target

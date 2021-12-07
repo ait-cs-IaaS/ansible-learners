@@ -1,62 +1,37 @@
 ---
 
-# -------------------------------------------
-# *** Prerequisites ***
-# -------------------------------------------
+# - name: Change IP-addresses
+#   ansible.builtin.replace:
+#     path: "{{ learners_exercises_paths.repo }}/\
+#       themes/learners/static/js/learners_1.js"
+#     regexp: (?<={{ item.key }} = )"(.*?)"
+#     replace: "\"{{ item.value }}\""
+#   loop: "{{ learners_ip_replacements | dict2items }}"
+#   become: yes
 
-- name: Set github access token
-  pause:
-    prompt: "Please enter the github access token"
-    echo: yes
-  register: access_token
-  when: not LEARNERS_ACCESS_TOKEN
+# - debug:
+#     msg: "{{ learners_components }}"
 
-- name: Register Access Token
-  set_fact:
-    LEARNERS_ACCESS_TOKEN: "{{ access_token.user_input  }}"
-  when: access_token.user_input is defined
-
-
-- name: Adding "{{ learners_user }}" user
-  ansible.builtin.user:
-    name: "{{ learners_user }}"
-    group: "{{ learners_usergroup }}"
-    shell: /bin/bash
-    password: "{{ learners_user_password | password_hash('sha512') }}"
-    generate_ssh_key: yes
-  become: yes
-
-
-- name: Ensure <{{ learners_base_packages | join(', ') }}> is installed
-  ansible.builtin.package:
-    name: "{{ learners_base_packages }}"
-    state: latest
-    update_cache: yes
-  become: yes
-
-- name: Cleanup base directory for reinstall
-  ansible.builtin.file:
-    path: "{{ learners_paths.base }}"
-    state: absent
-  become: yes
-  when: learners_git.always_reinstall
-
-- name: Ensure learners paths exist
-  ansible.builtin.file:
-    path: "{{ item.value }}"
-    owner: "{{ learners_user }}"
-    group: "{{ learners_usergroup }}"
-    state: directory
-  become: yes
-  loop: "{{ learners_paths | dict2items }}"
-
+# - debug:
+#     msg: "{{ breaker }}"
 
 # -------------------------------------------
-# *** nginx ***
+# *** Learners ***
 # -------------------------------------------
 
-- include: nginx.yml
-  tags: [nginx]
+- name: Deploy learners App
+  ansible.builtin.include_role:
+    name: "ansible-flask"
+    vars_from: "/{{ role_path }}/vars/learners.yml"
+
+# -------------------------------------------
+# *** Venjix ***
+# -------------------------------------------
+
+- name: Deploy venjix
+  ansible.builtin.include_role:
+    name: "ansible-flask"
+    vars_from: "/{{ role_path }}/vars/venjix.yml"
 
 # -------------------------------------------
 # *** Exercises ***
@@ -64,17 +39,3 @@
 
 - include: exercises.yml
   tags: [exercises]
-
-# -------------------------------------------
-# *** Install Learners Environment ***
-# -------------------------------------------
-
-- include: learners.yml
-  tags: [learners]
-
-# -------------------------------------------
-# *** Service ***
-# -------------------------------------------
-
-- include: systemd.yml
-  tags: [systemd]
