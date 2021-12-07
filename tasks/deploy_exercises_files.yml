@@ -1,3 +1,6 @@
+# -------------------------------------------
+# *** Deploy Exercises per user ***
+# -------------------------------------------
 
 - name: Copy base files for {{ username }}
   ansible.builtin.copy:

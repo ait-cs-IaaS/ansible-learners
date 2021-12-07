@@ -38,7 +38,6 @@
   become: yes
   become_user: "{{ learners_user }}"
 
-
 # -------------------------------------------
 # *** Local Templating ***
 # -------------------------------------------
@@ -66,6 +65,15 @@
     recursive: no
   become: yes
   become_user: "{{ ansible_user }}"
+
+- name: Change IP-addresses
+  ansible.builtin.replace:
+    path: "{{ learners_exercises_paths.repo }}/\
+      themes/learners/static/js/learners.js"
+    regexp: (?<={{ item.key }} = )"(.*?)"
+    replace: "\"{{ item.value }}\""
+  loop: "{{ learners_ip_replacements | dict2items }}"
+  become: yes
 
 - name: Only keep content
   connection : local
@@ -111,11 +119,9 @@
   when: item.state == 'file'
   no_log: True
 
-
 # -------------------------------------------
 # *** Deploy to target host ***
 # -------------------------------------------
-
 
 - name: Ensure exercises paths exist
   ansible.builtin.file:
@@ -140,6 +146,27 @@
   become: yes
   become_user: "{{ ansible_user }}"
   
+# -------------------------------------------
+# *** NGINX config ***
+# -------------------------------------------
+
+- name: "Ensure <{{ learners_nginx_packages | join(', ') }}> is installed"
+  ansible.builtin.package:
+    name: "{{ learners_nginx_packages }}"
+    state: latest
+    update_cache: yes
+  become: yes
+
+- name: "Remove default config"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: 
+    - "/etc/nginx/sites-enabled/default"
+    - "/etc/nginx/conf.d"
+  become: yes
+  notify: restart nginx
+
 - name: Add NGINX configuration file
   ansible.builtin.template:
     src: nginx_exercises.conf.j2
