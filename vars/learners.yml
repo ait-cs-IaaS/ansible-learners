@@ -25,7 +25,7 @@ flask_config:
 
 learners_config:
   LEARNERS_HTPASSWD: "/etc/nginx/htpasswd"
-  JWT_SECRET_KEY: "53CR3T"
+  JWT_SECRET_KEY: "{{ JWT_SECRET_KEY }}"
 
 # -------------------------------------------
 # *** Learners NGINX template ***
@@ -76,7 +76,7 @@ flask_service:
     {{ flask_paths.base }}/venv/bin/gunicorn 
     --workers 5
     wsgi:app
-    -b 127.0.0.1:{{ learners_ports.learners }}
+    --bind unix:learners.sock
     --pythonpath={{ flask_paths.base }}/venv/lib/python{{ flask_python_version }}
   state: restarted
   autostart: yes
