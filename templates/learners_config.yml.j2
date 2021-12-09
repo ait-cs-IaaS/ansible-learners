@@ -1,6 +1,7 @@
 # Common
 DEBUG: {{ learners_config.DEBUG | default(False)}}
 TESTING: {{ learners_config.TESTING | default(False)}}
+LANGUAGE: "{{ learners_config.LANGUAGE | default("en") }}"
 
 # Appearance
 THEME: "{{ learners_config.THEME | default("dark") }}"
@@ -8,7 +9,8 @@ BRANDING: {{ learners_config.BRANDING | default(True)}} # display logos on start
 
 # Authentication
 LEARNERS_HTPASSWD: "{{ learners_config.LEARNERS_HTPASSWD | default("/etc/nginx/htpasswd") }}" # location of passwd file: e.g. "/etc/nginx/htpasswd"
-JWT_SECRET_KEY: "{{ learners_config.JWT_SECRET_KEY | default( 999999999999999999995 | random | to_uuid ) }}"
+VENJIX_AUTH_SECRET: "{{ VENJIX_AUTH_SECRET }}"
+JWT_SECRET_KEY: "{{ JWT_SECRET_KEY }}"
 JWT_TOKEN_LOCATION: ['headers', 'cookies']
 JWT_ACCESS_TOKEN_DURATION: {{ learners_config.JWT_ACCESS_TOKEN_DURATION | default(120)}} 
 
