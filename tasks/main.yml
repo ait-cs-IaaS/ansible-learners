@@ -1,19 +1,5 @@
 ---
 
-# - name: Change IP-addresses
-#   ansible.builtin.replace:
-#     path: "{{ learners_exercises_paths.repo }}/\
-#       themes/learners/static/js/learners_1.js"
-#     regexp: (?<={{ item.key }} = )"(.*?)"
-#     replace: "\"{{ item.value }}\""
-#   loop: "{{ learners_ip_replacements | dict2items }}"
-#   become: yes
-
-# - debug:
-#     msg: "{{ learners_components }}"
-
-# - debug:
-#     msg: "{{ breaker }}"
 
 # -------------------------------------------
 # *** Learners ***
