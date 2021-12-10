@@ -1,6 +1,6 @@
 # Ansible Role: learners
 
-Install an configure a [AIT learnes environment](https://github.com/ait-cs-IaaS/learners/)
+Install and configure a [AIT learnes environment](https://github.com/ait-cs-IaaS/learners/)
 
 ## Requirements
 
@@ -9,6 +9,7 @@ Install an configure a [AIT learnes environment](https://github.com/ait-cs-IaaS/
 
 ## Dependencies
 
+[ansible-flask](https://github.com/ait-cs-IaaS/ansible-flask)
 [ansible-novnc](https://github.com/ait-cs-IaaS/ansible-novnc)
 
 ## Configuration example
@@ -19,4 +20,4 @@ GPL-3.0
 
 ## Author information
 
-Benjamin Akhras
+Benjamin Akhras, Lenhard Reuter
