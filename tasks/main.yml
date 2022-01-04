@@ -1,5 +1,30 @@
 ---
 
+# -------------------------------------------
+# *** Disable unattended upgrades ***
+# -------------------------------------------
+
+- name: Disable timers for unattended upgrades
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  loop:
+    - 'apt-daily.timer'
+    - 'apt-daily-upgrade.timer'
+  become: yes
+
+- name: Reload systemctl daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Wait for running unattended upgrades to finish
+  ansible.builtin.command: |
+    systemd-run 
+    --property="After=apt-daily.service apt-daily-upgrade.service" 
+    --wait /bin/true
+  become: yes
 
 # -------------------------------------------
 # *** Learners ***
@@ -25,3 +50,22 @@
 
 - include: exercises.yml
   tags: [exercises]
+  
+# -------------------------------------------
+# *** Enable unattended upgrades ***
+# -------------------------------------------
+
+- name: Enable timers for unattended upgrades
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - 'apt-daily.timer'
+    - 'apt-daily-upgrade.timer'
+  become: yes
+
+- name: Reload systemctl daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: yes
