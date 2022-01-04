@@ -10,10 +10,6 @@ flask_python_version: "3.8"
 flask_git:
   user: "ait-cs-IaaS"
   repo: "learners"
-  token: "{{ GIT_ACCESS_TOKEN }}"
-  branch: "master"
-  force: yes
-  always_reinstall: yes
 
 # -------------------------------------------
 # *** Learners config template ***

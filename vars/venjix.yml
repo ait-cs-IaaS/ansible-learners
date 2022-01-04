@@ -10,10 +10,6 @@ flask_python_version: "3.8"
 flask_git:
   user: "ait-cs-IaaS"
   repo: "venjix"
-  token: "{{ GIT_ACCESS_TOKEN }}"
-  branch: "master"
-  force: yes
-  always_reinstall: yes
 
 # -------------------------------------------
 # *** Venjix ENV variables ***
@@ -22,7 +18,6 @@ flask_git:
 flask_ENV_variables:
   VENJIX_AUTH_SECRET: "{{ VENJIX_AUTH_SECRET }}"
   SCRIPT_DIR: "{{ SCRIPT_DIR | default('scripts') }}"
-
   
 # -------------------------------------------
 # *** Venjix Service ***
