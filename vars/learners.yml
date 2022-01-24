@@ -46,6 +46,10 @@ learners_nginx:
 flask_userlist:
   test: "{{ 'test' | password_hash('bcrypt') }}"
   ben: "{{ 'ben' | password_hash('bcrypt') }}"
+  paul: "{{ 'paul' | password_hash('bcrypt') }}"
+  david: "{{ 'david' | password_hash('bcrypt') }}"
+  lenny: "{{ 'lenny' | password_hash('bcrypt') }}"
+  gregor: "{{ 'gregor' | password_hash('bcrypt') }}"
   
 # -------------------------------------------
 # *** Learners Service ***

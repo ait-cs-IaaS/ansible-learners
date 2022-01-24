@@ -21,7 +21,11 @@ learners_nginx_packages:
 
 learners_userlist:
   test: "{{ 'test' | password_hash('bcrypt') }}"
-  test2: "{{ 'test2' | password_hash('bcrypt') }}"
+  ben: "{{ 'ben' | password_hash('bcrypt') }}"
+  paul: "{{ 'paul' | password_hash('bcrypt') }}"
+  david: "{{ 'david' | password_hash('bcrypt') }}"
+  lenny: "{{ 'lenny' | password_hash('bcrypt') }}"
+  gregor: "{{ 'gregor' | password_hash('bcrypt') }}"
 
 custom_start_tag: "{{ '{{' }}%"
 custom_end_tag: "%{{ '}}' }}"
@@ -70,6 +74,26 @@ learners_exercises_serverconfig:
     exercises:
       port: 9001
   test:
+    docs:
+      port: 8002
+    exercises:
+      port: 9002
+  paul:
+    docs:
+      port: 8002
+    exercises:
+      port: 9002
+  david:
+    docs:
+      port: 8002
+    exercises:
+      port: 9002
+  lenny:
+    docs:
+      port: 8002
+    exercises:
+      port: 9002
+  gregor:
     docs:
       port: 8002
     exercises:
