@@ -1,5 +1,10 @@
 ---
 
+- name: Update notification
+  fail:
+    msg: "Your ansible version is {{ ansible_version.full }}, please update to a version newer than 2.12.0"
+  when: ansible_version.full < "2.12.0"
+
 # -------------------------------------------
 # *** Disable unattended upgrades ***
 # -------------------------------------------
@@ -25,6 +30,15 @@
     --property="After=apt-daily.service apt-daily-upgrade.service" 
     --wait /bin/true
   become: yes
+  
+# # -------------------------------------------
+# # *** Mattermost ***
+# # -------------------------------------------
+
+- name: Deploy mattermost Server
+  ansible.builtin.include_role:
+    name: "ansible-mattermost"
+    # vars_from: "/{{ role_path }}/vars/learners.yml"
 
 # -------------------------------------------
 # *** Prerequisites ***
