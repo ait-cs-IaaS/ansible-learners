@@ -1,11 +1,21 @@
 ---
 
+
+# -------------------------------------------
+# *** Prerequisites ***
+# -------------------------------------------
+
 - name: Ensure <{{ learners_exercises_packages | join(', ') }}> is installed
   ansible.builtin.package:
     name: "{{ learners_exercises_packages }}"
     state: latest
     update_cache: yes
   become: yes
+
+
+# -------------------------------------------
+# *** Get Exercises Repo ***
+# -------------------------------------------
 
 - name: Cleanup base directory for reinstall
   ansible.builtin.file:
@@ -16,136 +26,80 @@
 
 - name: Ensure exercises paths exist
   ansible.builtin.file:
-    path: "{{ item.value }}"
+    path: "{{ learners_exercises_paths.base }}"
     owner: "{{ learners_user }}"
     group: "{{ learners_usergroup }}"
     state: directory
-  loop: "{{ learners_exercises_paths | dict2items }}"
   become: yes
 
-- name: Clone exercises repo to target host
+- name: Clone exercises and documentation repo to target host
   ansible.builtin.git:
-    repo: "https://\
-      {{ item.value['token'] }}@github.com/\
+    repo: "\
+      {{ 'https://' if item.value['keyfile'] is not defined else 'git' }}\
+      {{ GIT_ACCESS_TOKEN if (GIT_ACCESS_TOKEN is defined and GIT_ACCESS_TOKEN | length > 0) else '' }}\
+      {{ '@' if (item.value['private_repo'] | default(True)) else ''}}\
+      {{ item.value['domain'] | default('github.com') }}\
+      {{ '/' if item.value['keyfile'] is not defined else ':'}}\
       {{ item.value['user'] }}/\
       {{ item.value['repo'] }}.git"
     dest: "{{ item.value['dest'] }}"
-    version: "{{ item.value['branch'] }}"
-    force: "{{ item.value['force'] }}"
+    version: "{{ item.value['branch'] | default('master') }}"
+    force: "{{ item.value['force'] | default(True) }}"
+    key_file: "{{ item.value['keyfile'] | default(omit)}}"
+    accept_newhostkey: yes
     single_branch: yes
     recursive: no
   loop: "{{ learners_exercises_git | dict2items }}"
   become: yes
   become_user: "{{ learners_user }}"
+  when: learners_exercises_git.always_reinstall | default('yes') or 
+        files.examined | int == 0
+
 
 # -------------------------------------------
-# *** Local Templating ***
+# *** Configure and build hugo ***
 # -------------------------------------------
 
-- name: Cleanup local templates
-  connection : local
+- name: Ensure config paths exist
   ansible.builtin.file:
-    path: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}"
-    state: absent
-  when: learners_exercises_git.learners_exercises['always_reinstall']
-  become: yes
-  become_user: "{{ ansible_user }}"
-
-- name: Clone exercises repo to local directory
-  connection : local
-  ansible.builtin.git:
-    repo: "https://\
-      {{ learners_exercises_git.learners_exercises['token'] }}@github.com/\
-      {{ learners_exercises_git.learners_exercises['user'] }}/\
-      {{ learners_exercises_git.learners_exercises['repo'] }}.git"
-    dest: "{{ learners_exercises_git.learners_exercises['local_dest'] }}"
-    version: "{{ learners_exercises_git.learners_exercises['branch'] }}"
-    force: "{{ learners_exercises_git.learners_exercises['force'] }}"
-    single_branch: yes
-    recursive: no
-  become: yes
-  become_user: "{{ ansible_user }}"
-
-- name: Change IP-addresses
-  ansible.builtin.replace:
-    path: "{{ learners_exercises_paths.repo }}/\
-      themes/learners/static/js/learners.js"
-    regexp: (?<={{ item.key }} = )"(.*?)"
-    replace: "\"{{ item.value }}\""
-  loop: "{{ learners_ip_replacements | dict2items }}"
-  become: yes
-
-- name: Only keep content
-  connection : local
-  block:
-    - ansible.builtin.find:
-        path: "{{ role_path }}/templates/\
-          {{ learners_exercises_git.learners_exercises['repo'] }}"
-        file_type: any
-        hidden: yes
-        excludes: "content"
-      register: found_files
-    - ansible.builtin.file:
-        path: "{{ item.path }}"
-        state: absent
-      with_items: "{{ found_files['files'] }}"
-  become: yes
-  become_user: "{{ ansible_user }}"
-  no_log: True
-
-# -------------------------------------------
-# Temporarly replace custom tags to allow ansible templating 
-# -------------------------------------------
-
-- name: Replace custom start tags
-  connection : local
-  ansible.builtin.replace:
-    path: "{{ item.src }}"
-    regexp: "{{ '{{' }}%"
-    replace: "{{ '{{' }} custom_start_tag {{ '}}' }}"
-  with_filetree: "{{ role_path }}/templates/\
-    {{ learners_exercises_git.learners_exercises['repo'] }}/"
-  when: item.state == 'file'
-  no_log: True
-
-- name: Replace custom end tags
-  connection : local
-  ansible.builtin.replace:
-    path: "{{ item.src }}"
-    regexp: "%{{ '}}' }}"
-    replace: "{{ '{{' }} custom_end_tag {{ '}}' }}"
-  with_filetree: "{{ role_path }}/templates/\
-    {{ learners_exercises_git.learners_exercises['repo'] }}/"
-  when: item.state == 'file'
-  no_log: True
-
-# -------------------------------------------
-# *** Deploy to target host ***
-# -------------------------------------------
-
-- name: Ensure exercises paths exist
-  ansible.builtin.file:
-    path: "{{learners_exercises_paths.base }}/users"
+    path: "{{ learners_exercises_paths.config }}"
     owner: "{{ learners_user }}"
     group: "{{ learners_usergroup }}"
     state: directory
   become: yes
 
-- name: Deploy exercises files per user
-  include:  deploy_exercises_files.yml 
-            username={{ user.key }} 
-  loop: "{{ learners_userlist | dict2items }}"
-  loop_control:
-   loop_var: user
-
-- name: Cleanup local templates
-  connection : local
-  ansible.builtin.file:
-    path: "{{ role_path }}/templates/{{ learners_exercises_git.learners_exercises['repo'] }}"
-    state: absent
+- name: "Create documentation/exercises base config file"
+  ansible.builtin.template:
+    src: hugo_config.yaml.j2
+    dest: "{{ learners_exercises_paths.config }}/{{ item.key }}_config.yaml"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0644
   become: yes
-  become_user: "{{ ansible_user }}"
-  
+  loop: "{{ hugo_vars['general'] | dict2items }}"
+
+- name: Deploy EXERCISES files per user
+  include_tasks: ./configure_hugo.yml
+  vars:
+    username: "{{ user_files.key }}" 
+    params: "{{ user_files.value['exercises']['params'] }}"
+    type: "exercises"
+    general: "{{ hugo_vars['general']['exercises'] }}"
+  loop: "{{ hugo_vars['users'] | dict2items }}"
+  loop_control:
+   loop_var: user_files
+
+- name: Deploy DOCUMENTATION files per user
+  include_tasks: ./configure_hugo.yml
+  vars:
+    username: "{{ user_files.key }}" 
+    params: "{{ user_files.value['documentation']['params'] }}"
+    type: "documentation"
+    general: "{{ hugo_vars['general']['documentation'] }}"
+  loop: "{{ hugo_vars['users'] | dict2items }}"
+  loop_control:
+   loop_var: user_files
+
 # -------------------------------------------
 # *** NGINX config ***
 # -------------------------------------------

@@ -1,0 +1,41 @@
+---
+
+
+# -------------------------------------------
+# *** Set params ***
+# -------------------------------------------
+
+- name: "[{{ username | upper }}] Create params file"
+  ansible.builtin.template:
+    src: hugo_params.yaml.j2
+    dest: "{{ learners_exercises_paths.config }}/{{ type }}_params_{{ username }}.yaml"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0644
+  become: yes
+
+- name: "[{{ username | upper }}] Create statics directory"
+  ansible.builtin.file:
+    path: "{{ learners_exercises_paths.base }}/statics/{{ username }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_usergroup }}"
+    state: directory
+  become: yes
+
+# -------------------------------------------
+# *** Build static files ***
+# -------------------------------------------
+
+- name: "[{{ username | upper }}] Build static site"
+  ansible.builtin.command:
+    cmd: "hugo --config \
+      {{ learners_exercises_paths.base }}/base_config.yaml,\
+      {{ learners_exercises_paths.config }}/{{ type }}_config.yaml,\
+      {{ learners_exercises_paths.config }}/{{ type }}_params_{{ username }}.yaml \
+      --destination \
+      {{ learners_exercises_paths.base }}/statics/{{ username }}/{{ type }}"
+  args:
+    chdir: "{{ learners_exercises_paths.base }}"
+    creates: "{{ learners_exercises_paths.base }}/statics/{{ username }}/{{ type }}"
+  become: yes
+  become_user: "{{ learners_user }}"

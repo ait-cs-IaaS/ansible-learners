@@ -10,8 +10,8 @@
     enabled: no
     state: stopped
   loop:
-    - 'apt-daily.timer'
-    - 'apt-daily-upgrade.timer'
+    - "apt-daily.timer"
+    - "apt-daily-upgrade.timer"
   become: yes
 
 - name: Reload systemctl daemon
@@ -25,6 +25,25 @@
     --property="After=apt-daily.service apt-daily-upgrade.service" 
     --wait /bin/true
   become: yes
+
+# -------------------------------------------
+# *** Prerequisites ***
+# -------------------------------------------
+
+- name: "Set github Access Token"
+  pause:
+    prompt: "Please enter the github access token"
+    echo: yes
+  register: access_token
+  when: |
+    learners_exercises_git.private_repo | default(True)
+    and not learners_exercises_git.keyfile is defined
+    and not GIT_ACCESS_TOKEN
+
+- name: "Register Access Token"
+  set_fact:
+    GIT_ACCESS_TOKEN: "{{ access_token.user_input  }}"
+  when: access_token.user_input is defined
 
 # -------------------------------------------
 # *** Learners ***
@@ -48,9 +67,9 @@
 # *** Exercises ***
 # -------------------------------------------
 
-- include: exercises.yml
+- include_tasks: exercises.yml
   tags: [exercises]
-  
+
 # -------------------------------------------
 # *** Enable unattended upgrades ***
 # -------------------------------------------
@@ -61,8 +80,8 @@
     enabled: yes
     state: started
   loop:
-    - 'apt-daily.timer'
-    - 'apt-daily-upgrade.timer'
+    - "apt-daily.timer"
+    - "apt-daily-upgrade.timer"
   become: yes
 
 - name: Reload systemctl daemon

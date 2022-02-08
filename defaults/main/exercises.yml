@@ -8,7 +8,7 @@ GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
 
 learners_exercises_paths:
   base: "/var/www/exercises"
-  repo: "/var/www/exercises/repo"
+  config: "/var/www/exercises/config"
 
 learners_exercises_packages:
   - "hugo"
@@ -20,33 +20,30 @@ learners_nginx_packages:
   - "apache2-utils"
 
 learners_userlist:
-  test: "{{ 'test' | password_hash('bcrypt') }}"
-  ben: "{{ 'ben' | password_hash('bcrypt') }}"
-  paul: "{{ 'paul' | password_hash('bcrypt') }}"
-  david: "{{ 'david' | password_hash('bcrypt') }}"
-  lenny: "{{ 'lenny' | password_hash('bcrypt') }}"
-  gregor: "{{ 'gregor' | password_hash('bcrypt') }}"
-
-custom_start_tag: "{{ '{{' }}%"
-custom_end_tag: "%{{ '}}' }}"
+  user1: "{{ 'user1' | password_hash('bcrypt') }}"
+  user2: "{{ 'user2' | password_hash('bcrypt') }}"
 
 learners_exercises_git:
   learners_exercises:
     user: "ait-cs-IaaS"
     repo: "learners_exercises"
-    token: "{{ GIT_ACCESS_TOKEN }}"
-    dest: "{{ learners_exercises_paths.repo }}"
-    local_dest: "{{ role_path }}/templates/learners_exercises"
     branch: "master"
+    domain: "github.com"
     force: yes
     always_reinstall: yes
+    private_repo: yes
+    # keyfile: "path/to/privatekey"
+    dest: "{{ learners_exercises_paths.base }}"
   learners_theme:
     user: "ait-cs-IaaS"
     repo: "learners_theme"
-    token: "{{ GIT_ACCESS_TOKEN }}"
-    dest: "{{ learners_exercises_paths.repo }}/themes/learners"
     branch: "master"
+    domain: "github.com"
     force: yes
+    always_reinstall: yes
+    private_repo: yes
+    # keyfile: "path/to/privatekey"
+    dest: "{{ learners_exercises_paths.base }}/themes/learners"
 
 learners_exercises_ssl:
   cert: ""
@@ -57,44 +54,40 @@ learners_ip_replacements:
   url_executeExercise: "http://{{ learners_addresses.learners }}/execute_script/"
   url_checkCompleted: "http://{{ learners_addresses.learners }}/check_completion/"
 
-learners_exercises_statics:
-  docs:
-    name: "docs"
-    path: "content/documentation"
-    dest: "docs"
-  exercises:
-    name: "exercises"
-    path: "content/exercises"
-    dest: "exercises"
-  
-learners_exercises_serverconfig:
-  ben:
-    docs:
-      port: 8001
+
+hugo_vars:
+  general:
+    documentation:
+      contentDir: "content/documentation"
+      languages:
+        en:
+          title: "Custom Exercises title"
     exercises:
-      port: 9001
-  test:
-    docs:
-      port: 8002
-    exercises:
-      port: 9002
-  paul:
-    docs:
-      port: 8002
-    exercises:
-      port: 9002
-  david:
-    docs:
-      port: 8002
-    exercises:
-      port: 9002
-  lenny:
-    docs:
-      port: 8002
-    exercises:
-      port: 9002
-  gregor:
-    docs:
-      port: 8002
-    exercises:
-      port: 9002
+      contentDir: "content/exercises"
+  users:
+    user1:
+      documentation:
+        port: 8001
+        params:
+          example_var: "user1's example_var"
+      exercises:
+        port: 9001
+        params:
+          exercises_template_var: "user1's test"
+          exercises_template_ip:
+            server1: "user1's test1"
+            server2: "user1's test2"
+            server3: "user1's test3"
+    user2:
+      documentation:
+        port: 8002
+        params:
+          example_var: "user2's example_var"
+      exercises:
+        port: 9002
+        params:
+          exercises_template_var: "user2's test"
+          exercises_template_ip:
+            server1: "user2's test1"
+            server2: "user2's test2"
+            server3: "user2's test3"

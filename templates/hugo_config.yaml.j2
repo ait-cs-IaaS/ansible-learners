@@ -1,0 +1,15 @@
+contentDir: "{{ item.value['contentDir'] | default("content/" + item.key) }}"
+
+Languages:
+{% if item.value['languages'] is defined %}
+  {{ item.value['languages'] | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% else %}
+  en:
+    title: "{{ item.key }}"
+    weight: 1
+    languageName: "English"
+    landingPageURL: "/en"
+    landingPageName: "<i class='fas fa-home'></i> Home"
+{% endif %}
+
+  
