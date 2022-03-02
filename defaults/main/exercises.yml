@@ -10,40 +10,21 @@ learners_exercises_paths:
   base: "/var/www/exercises"
   config: "/var/www/exercises/config"
 
-learners_exercises_packages:
+learners_packages:
   - "hugo"
   - "git"
-
-learners_nginx_packages:
   - "nginx"
-  - "python3-passlib"
-  - "apache2-utils"
 
 learners_userlist:
   user1: "{{ 'user1' | password_hash('bcrypt') }}"
   user2: "{{ 'user2' | password_hash('bcrypt') }}"
 
-learners_exercises_git:
-  learners_exercises:
-    user: "ait-cs-IaaS"
-    repo: "learners_exercises"
-    branch: "master"
-    domain: "github.com"
-    force: yes
-    always_reinstall: yes
-    private_repo: yes
-    # keyfile: "path/to/privatekey"
-    dest: "{{ learners_exercises_paths.base }}"
-  learners_theme:
-    user: "ait-cs-IaaS"
-    repo: "learners_theme"
-    branch: "master"
-    domain: "github.com"
-    force: yes
-    always_reinstall: yes
-    private_repo: yes
-    # keyfile: "path/to/privatekey"
-    dest: "{{ learners_exercises_paths.base }}/themes/learners"
+learners_exercise:
+    repo: "ait-cs-IaaS/learners_exercises"
+    release: "latest"
+learners_theme:
+    repo: "ait-cs-IaaS/learners_theme"
+    release: "latest"
 
 learners_exercises_ssl:
   cert: ""

@@ -22,13 +22,11 @@ server {
   root        {{ learners_nginx.wwwroot }};
 
   location / {
-    
-            if ($http_origin ~* "^http?://192.168.56.106$") {
-                add_header Access-Control-Allow-Origin "$http_origin";
-            }
-
-            proxy_pass http://unix:{{ flask_service.socket }};
-            include proxy_params;
-        }
+    proxy_pass http://unix:{{ flask_service.socket }};
+    include proxy_params;
+  }
+  location /static {
+    try_files $uri $uri/ =404;
+  }
 
 }

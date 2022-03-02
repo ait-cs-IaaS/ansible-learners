@@ -3,6 +3,7 @@ learners_base_ip: "192.168.56.106" #"{{ ansible_enp0s3.ipv4.address }}"
 
 GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
 
+learners_deploy_mattermost: false
 learners_addresses:
   venjix: "127.0.0.1"
   learners: "{{ learners_base_ip }}"

@@ -1,40 +1,52 @@
-# Common
-DEBUG: {{ learners_config.DEBUG | default(False)}}
-TESTING: {{ learners_config.TESTING | default(False)}}
-LANGUAGE: "{{ learners_config.LANGUAGE | default("en") }}"
+---
+learners:
+  htpasswd: "temp_htpasswd"
+  # theme: "light"
 
-# Appearance
-THEME: "{{ learners_config.THEME | default("dark") }}"
-BRANDING: {{ learners_config.BRANDING | default(True)}} # display logos on start screen
+jwt:
+  jwt_secret_key: "53CR3T"
+  jwt_for_vnc_access: False
 
-# Authentication
-LEARNERS_HTPASSWD: "{{ learners_config.LEARNERS_HTPASSWD | default("/etc/nginx/htpasswd") }}" # location of passwd file: e.g. "/etc/nginx/htpasswd"
-VENJIX_AUTH_SECRET: "{{ VENJIX_AUTH_SECRET }}"
-JWT_SECRET_KEY: "{{ JWT_SECRET_KEY }}"
-JWT_TOKEN_LOCATION: ['headers', 'cookies']
-JWT_ACCESS_TOKEN_DURATION: {{ learners_config.JWT_ACCESS_TOKEN_DURATION | default(120)}} 
+database:
+  db_uri: "sqlite:///learners_tracker.db"
 
-# Database
-SQLALCHEMY_DATABASE_URI: "{{ learners_config.SQLALCHEMY_DATABASE_URI | default("sqlite:///learners_tracker.db") }}"
-SQLALCHEMY_TRACK_MODIFICATIONS: False
+# mail:
+#   server: ""
+#   port: 587
+#   username: ""
+#   password: ""
+#   tls: True
+#   ssl: False
 
-# CORS Management
-CORS_HEADERS: "Content-Type"
-CORS_ORIGINS: "*"
-CORS_SUPPORTS_CREDENTIALS: True
-
-# Learners Components
-VENJIX_URL:     "http://{{ learners_components.VENJIX_URL }}"
-DOCS_URL:       "http://{{ learners_components.DOCS_URL }}"
-EXERCISES_URL:  "http://{{ learners_components.EXERCISES_URL }}"
-CALLBACK_URL:   "http://{{ learners_components.CALLBACK_URL }}"
-VNC_URL:        "https://{{ learners_components.VNC_URL }}" 
-
-# User-dependent Ports
-PORT_LIST: 
-{% for dict_entry in learners_exercises_serverconfig | dict2items %}
-  {{ dict_entry.key }}:
-{% for type_entry in dict_entry.value | dict2items %}
-    {{ type_entry.key }}: "{{ type_entry.value['port'] }}"      
-{% endfor %}
-{% endfor %}
+components:
+  venjix_auth_secret: "53CR3T"
+  urls:
+    venjix: "{{ venjix_url }}"
+    learners: "{{ learners_url }}"
+    novnc: "{{ novnc_url }}"
+  user_assignments:
+    test:
+      vnc_clients:
+        soc_client:
+          target: placeholder_1
+          tooltip: "SOC client"
+          username: csirt1
+          password: placeholder
+        pps_client:
+          target: placeholder_3
+          tooltip: "PPS client"
+          username: csirt3
+          password: placeholder
+      ports:
+        docs: 8080
+        exercises: 8888
+    ben:
+      vnc_clients:
+        soc_client:
+          target: placeholder_2
+          tooltip: "SOC client"
+          username: csirt2
+          password: placeholder
+      ports:
+        docs: 8080
+        exercises: 8888

@@ -38,7 +38,7 @@ learners_nginx:
   ssl_cert: ""
   ssl_key: ""
   wwwroot: "{{ flask_paths.base }}"
-  
+
 # -------------------------------------------
 # *** Learners HTPASSWD ***
 # -------------------------------------------
@@ -50,7 +50,7 @@ flask_userlist:
   david: "{{ 'david' | password_hash('bcrypt') }}"
   lenny: "{{ 'lenny' | password_hash('bcrypt') }}"
   gregor: "{{ 'gregor' | password_hash('bcrypt') }}"
-  
+
 # -------------------------------------------
 # *** Learners Service ***
 # -------------------------------------------
@@ -73,7 +73,7 @@ flask_service:
   RuntimeDirectory: "learners_runtime"
   WorkingDirectory: "{{ flask_paths.base }}"
   ExecStart: >
-    {{ flask_paths.base }}/venv/bin/gunicorn 
+    {{ flask_paths.base }}/venv/bin/gunicorn
     --workers 5
     wsgi:app
     --bind unix:learners.sock

@@ -1,28 +1,17 @@
 ---
-
-
-# -------------------------------------------
-# *** Prerequisites ***
-# -------------------------------------------
-
-- name: Ensure <{{ learners_exercises_packages | join(', ') }}> is installed
+- name: Ensure learners build packages are installed
   ansible.builtin.package:
-    name: "{{ learners_exercises_packages }}"
-    state: latest
-    update_cache: yes
-  become: yes
-
-
-# -------------------------------------------
-# *** Get Exercises Repo ***
-# -------------------------------------------
+    name: "{{ learners_packages }}"
+    state: present
+    update_cache: true
+  become: true
 
 - name: Cleanup base directory for reinstall
   ansible.builtin.file:
     path: "{{ learners_exercises_paths.base }}"
     state: absent
   when: learners_exercises_git.learners_exercises['always_reinstall']
-  become: yes
+  become: true
 
 - name: Ensure exercises paths exist
   ansible.builtin.file:
@@ -30,35 +19,9 @@
     owner: "{{ learners_user }}"
     group: "{{ learners_usergroup }}"
     state: directory
-  become: yes
+    mode: 0755
+  become: true
 
-- name: Clone exercises and documentation repo to target host
-  ansible.builtin.git:
-    repo: "\
-      {{ 'https://' if item.value['keyfile'] is not defined else 'git' }}\
-      {{ GIT_ACCESS_TOKEN if (GIT_ACCESS_TOKEN is defined and GIT_ACCESS_TOKEN | length > 0) else '' }}\
-      {{ '@' if (item.value['private_repo'] | default(True)) else ''}}\
-      {{ item.value['domain'] | default('github.com') }}\
-      {{ '/' if item.value['keyfile'] is not defined else ':'}}\
-      {{ item.value['user'] }}/\
-      {{ item.value['repo'] }}.git"
-    dest: "{{ item.value['dest'] }}"
-    version: "{{ item.value['branch'] | default('master') }}"
-    force: "{{ item.value['force'] | default(True) }}"
-    key_file: "{{ item.value['keyfile'] | default(omit)}}"
-    accept_newhostkey: yes
-    single_branch: yes
-    recursive: no
-  loop: "{{ learners_exercises_git | dict2items }}"
-  become: yes
-  become_user: "{{ learners_user }}"
-  when: learners_exercises_git.always_reinstall | default('yes') or 
-        files.examined | int == 0
-
-
-# -------------------------------------------
-# *** Configure and build hugo ***
-# -------------------------------------------
 
 - name: Ensure config paths exist
   ansible.builtin.file:
@@ -66,7 +29,8 @@
     owner: "{{ learners_user }}"
     group: "{{ learners_usergroup }}"
     state: directory
-  become: yes
+    mode: 0640
+  become: true
 
 - name: "Create documentation/exercises base config file"
   ansible.builtin.template:
@@ -75,59 +39,47 @@
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     mode: 0644
-  become: yes
+  become: true
   loop: "{{ hugo_vars['general'] | dict2items }}"
 
 - name: Deploy EXERCISES files per user
   include_tasks: ./configure_hugo.yml
   vars:
-    username: "{{ user_files.key }}" 
+    username: "{{ user_files.key }}"
     params: "{{ user_files.value['exercises']['params'] }}"
     type: "exercises"
     general: "{{ hugo_vars['general']['exercises'] }}"
   loop: "{{ hugo_vars['users'] | dict2items }}"
   loop_control:
-   loop_var: user_files
+    loop_var: user_files
 
 - name: Deploy DOCUMENTATION files per user
   include_tasks: ./configure_hugo.yml
   vars:
-    username: "{{ user_files.key }}" 
+    username: "{{ user_files.key }}"
     params: "{{ user_files.value['documentation']['params'] }}"
     type: "documentation"
     general: "{{ hugo_vars['general']['documentation'] }}"
   loop: "{{ hugo_vars['users'] | dict2items }}"
   loop_control:
-   loop_var: user_files
-
-# -------------------------------------------
-# *** NGINX config ***
-# -------------------------------------------
-
-- name: "Ensure <{{ learners_nginx_packages | join(', ') }}> is installed"
-  ansible.builtin.package:
-    name: "{{ learners_nginx_packages }}"
-    state: latest
-    update_cache: yes
-  become: yes
+    loop_var: user_files
 
 - name: "Remove default config"
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
-  loop: 
+  loop:
     - "/etc/nginx/sites-enabled/default"
     - "/etc/nginx/conf.d"
-  become: yes
+  become: true
   notify: restart nginx
 
 - name: Add NGINX configuration file
   ansible.builtin.template:
-    src: nginx_exercises.conf.j2
-    dest: /etc/nginx/sites-enabled/exercises.conf
+    src: nginx_learners.conf.j2
+    dest: /etc/nginx/sites-enabled/learners.conf
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     mode: 0644
-  become: yes
+  become: true
   notify: restart nginx
-  
