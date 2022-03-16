@@ -1,27 +1,20 @@
+---
+learners_baseurl: "https://learners.cyberrange"
+learners_venjix_url: "https://venjix.cyberrange"
+learners_docs_url: "/docs"
+learners_exercises_url: "/exercises"
+learners_venjix_secret: "{{ 10 | to_uuid }}"
+learners_jwt_secret: "{{ 42 | to_uuid }}"
 
-learners_base_ip: "192.168.56.106" #"{{ ansible_enp0s3.ipv4.address }}"
+learners_pip_version: "0.0.3"
+learners_pip: "https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz"
 
-GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
+learners_basepath: "/opt/learners"
+learners_user: "learners"
+learners_group: "learners"
 
-learners_deploy_mattermost: false
-learners_addresses:
-  venjix: "127.0.0.1"
-  learners: "{{ learners_base_ip }}"
-  docs: "{{ learners_base_ip }}"
-  exercises: "{{ learners_base_ip }}"
-  vnc: "placeholder_2@10.17.4.219/"
+learners_users: ["test"]
 
-learners_ports:
-  venjix: 5000
-  learners: 80
-
-learners_components:
-  VENJIX_URL: "{{ learners_addresses.venjix }}:{{ learners_ports.venjix }}"
-  DOCS_URL: "{{ learners_addresses.docs }}"
-  EXERCISES_URL: "{{ learners_addresses.exercises }}"
-  LEARNERS_URL: "{{ learners_addresses.learners }}"
-  CALLBACK_URL: "{{ learners_addresses.learners }}/callback"
-  VNC_URL: "{{ learners_addresses.vnc }}"
-
-VENJIX_AUTH_SECRET: "{{ 10 | to_uuid }}"
-JWT_SECRET_KEY: "{{ 42 | to_uuid }}"
+learners_nginx_server_name: "learnes.cyberrange.rocks"
+# learners_nginx_ssl_cert: ""
+# learners_nginx_ssl_key: ""

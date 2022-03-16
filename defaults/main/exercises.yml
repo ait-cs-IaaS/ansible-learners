@@ -1,14 +1,5 @@
 ---
-
-learners_user: "www-data"
-learners_usergroup: "{{ learners_user }}"
-learners_user_password: "password"
-
 GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
-
-learners_exercises_paths:
-  base: "/var/www/exercises"
-  config: "/var/www/exercises/config"
 
 learners_packages:
   - "hugo"
@@ -20,11 +11,11 @@ learners_userlist:
   user2: "{{ 'user2' | password_hash('bcrypt') }}"
 
 learners_exercise:
-    repo: "ait-cs-IaaS/learners_exercises"
-    release: "latest"
+  repo: "ait-cs-IaaS/learners_exercises"
+  release: "latest"
 learners_theme:
-    repo: "ait-cs-IaaS/learners_theme"
-    release: "latest"
+  repo: "ait-cs-IaaS/learners_theme"
+  release: "latest"
 
 learners_exercises_ssl:
   cert: ""

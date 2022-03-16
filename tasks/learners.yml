@@ -1,0 +1,7 @@
+---
+- name: Install learners in virtualenv
+  pip:
+    name: "{{ learners_pip }}"
+    virtualenv: /opt/learners
+  become: true
+
