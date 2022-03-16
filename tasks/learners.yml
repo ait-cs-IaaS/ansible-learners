@@ -1,7 +1,21 @@
 ---
+- name: Ensure learners build packages are installed
+  ansible.builtin.package:
+    name: "{{ learners_packages }}"
+    state: present
+    update_cache: true
+  become: true
+
 - name: Install learners in virtualenv
   pip:
     name: "{{ learners_pip }}"
     virtualenv: /opt/learners
   become: true
 
+- name: Copy static dir from site-packages to basepath
+  ansible.builtin.copy:
+    src: "{{ learners_basepath }}/venv/lib/python3.{{ ansible_python.version.minor }}/site-packages/learners/static"
+    dest: "{{ learners_static_dir }}"
+    remote_src: true
+    mode: preserve
+  become: true

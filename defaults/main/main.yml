@@ -15,6 +15,7 @@ learners_group: "learners"
 
 learners_users: ["test"]
 
+learners_static_dir: "{{ learners_basepath }}/static"
 learners_nginx_server_name: "learnes.cyberrange.rocks"
 # learners_nginx_ssl_cert: ""
 # learners_nginx_ssl_key: ""
