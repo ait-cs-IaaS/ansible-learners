@@ -1,20 +1,10 @@
 ---
 flask_app_name: "learners"
 
-flask_paths:
-  base: "/var/www/learners"
-  log: "/var/log/learners"
+learners_user: "learners"
 
-learners_nginx:
-  server_name: "learners.cyberrange.at"
-  listen: "80 default_server"
-  listen_ssl: "443 ssl default_server"
-  ssl_cert: ""
-  ssl_key: ""
-  
-  
-learners_wwwroot: "{{ learners_basepath }}/venv/"
-learners_socket_path: "/var/run/learners.sock"
+learners_wwwroot: "{{ learners_basepath }}/webroot/"
+learners_socket_path: "/var/run/learners/learners.sock"
 
 flask_service_execstart: >
     {{ learners_basepath }}/venv/bin/gunicorn

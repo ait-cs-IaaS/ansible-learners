@@ -1,10 +1,9 @@
 ---
 learners:
-  htpasswd: "temp_htpasswd"
-  # theme: "light"
+  htpasswd: "/opt/learners/htpasswd"
 
 jwt:
-  jwt_secret_key: "53CR3T"
+  jwt_secret_key: "{{ learners_jwt_secret }}"
   jwt_for_vnc_access: False
 
 database:
@@ -19,34 +18,11 @@ database:
 #   ssl: False
 
 components:
-  venjix_auth_secret: "53CR3T"
+  venjix_auth_secret: "{{ learners_venjix_secret }}"
   urls:
-    venjix: "{{ venjix_url }}"
-    learners: "{{ learners_url }}"
-    novnc: "{{ novnc_url }}"
-  user_assignments:
-    test:
-      vnc_clients:
-        soc_client:
-          target: placeholder_1
-          tooltip: "SOC client"
-          username: csirt1
-          password: placeholder
-        pps_client:
-          target: placeholder_3
-          tooltip: "PPS client"
-          username: csirt3
-          password: placeholder
-      ports:
-        docs: 8080
-        exercises: 8888
-    ben:
-      vnc_clients:
-        soc_client:
-          target: placeholder_2
-          tooltip: "SOC client"
-          username: csirt2
-          password: placeholder
-      ports:
-        docs: 8080
-        exercises: 8888
+    venjix: "{{ learners_venjix_url }}"
+    novnc: "{{ learners_novnc_url }}"
+    callback: "{{ learners_url }}"
+    documentation: "{{ learners_url }}/documentation"
+    exercises: "{{ learners_url }}/exercises"
+  {{ learners_users | to_nice_yaml }}

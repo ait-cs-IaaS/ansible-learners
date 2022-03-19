@@ -1,11 +1,6 @@
 ---
 GIT_ACCESS_TOKEN: "{{ lookup('env', 'GIT_ACCESS_TOKEN') }}"
 
-learners_packages:
-  - "hugo"
-  - "git"
-  - "nginx"
-
 learners_userlist:
   user1: "{{ 'user1' | password_hash('bcrypt') }}"
   user2: "{{ 'user2' | password_hash('bcrypt') }}"

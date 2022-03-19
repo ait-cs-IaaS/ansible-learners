@@ -4,3 +4,9 @@
     name: nginx
     state: restarted
   become: true
+
+- name: restart learners
+  service:
+    name: learners
+    state: restarted
+  become: true

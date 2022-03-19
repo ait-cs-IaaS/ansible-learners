@@ -4,7 +4,7 @@ upstream app_server {
 
 {% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
 server {
-  listen 80;
+  listen {{ learners_nginx_listen }};
   server_name {{ learners_nginx_server_name }};
 
   location / {
@@ -15,7 +15,7 @@ server {
 
 server {
 {% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
-  listen 443 ssl;
+  listen {{ learners_nginx_listen_ssl }};
   ssl_certificate     {{ learners_nginx_ssl_cert }};
   ssl_certificate_key {{ learners_nginx_ssl_key }};
 {% else %}

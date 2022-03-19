@@ -5,9 +5,9 @@ After=network.target
 [Service]
 Type=notify
 User={{ learners_user }}
-Group={{ learners_group }}
+Environment=LEARNERS_CONFIG={{ learners_basepath }}/learners_config.yml
+RuntimeDirectory=learners
 WorkingDirectory={{ learners_basepath }}
-EnvironmentFile=-{{ flask_service_environment }}
 ExecStart={{ flask_service_execstart }}
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
