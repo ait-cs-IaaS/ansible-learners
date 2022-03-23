@@ -1,37 +1,63 @@
 ---
-learners_url: "https://learners.cyberrange.rocks"
+learners_server_name: "learners.cyberrange.rocks"
+learners_url: "https://{{ learners_server_name }}"
 learners_venjix_url: "https://venjix.cyberrange"
 learners_novnc_url: "https://novnc.cyberrange"
+learners_documentation_path: "{{ learners_basepath }}/webroot/documentation"
+learners_documentation_endpoint: "/documentation"
+
+learners_exercises_path: "{{ learners_basepath }}/webroot/exercises"
+learners_exercises_endpoint: "/exercises"
+
+learners_callback_endpoint: "{{ learners_url }}/callback"
+
+
+learners_exercise_branch: "rtc_exercises"
+learners_theme_branch: "master"
+learners_github_pat: ""
+
 learners_venjix_secret: "{{ 10 | to_uuid }}"
 learners_jwt_secret: "{{ 42 | to_uuid }}"
 
-learners_pip_version: "0.1.0"
+learners_pip_version: "0.1.1"
 learners_pip: "https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz"
+learners_exercise_repository: "https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/cyber-exercises.git"
+learners_theme_repository: "https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_theme.git"
+
+learners_exercise_build_path: "{{ learners_basepath }}/exercise_repository"
+
+learners_exercise_params:
+  - { name: 'user1', params: {'name': 'Franz Joseph Karl, aus dem Haus Habsburg-Lothringen'}}
+  - { name: 'user2', params: {'name': 'Elisabeth Amalie Eugenie von Wittelsbach'}}
+  - { name: 'user3', params: {'name': 'Kimberly Ann Hart'}}
+
 
 learners_basepath: "/opt/learners"
 
 learners_users:
-  test:
-    vnc_clients:
-      soc_client:
-        target: placeholder_1
-        tooltip: "SOC client"
-        username: csirt1
-        password: placeholder
-      pps_client:
-        target: placeholder_3
-        tooltip: "PPS client"
-        username: csirt3
-        password: placeholder
-  ben:
-    vnc_clients:
-      soc_client:
-        target: placeholder_2
-        tooltip: "SOC client"
-        username: csirt2
-        password: placeholder
+  users:
+    test:
+      password: test
+      vnc_clients:
+        soc_client:
+          target: placeholder_1
+          tooltip: "SOC client"
+          username: csirt1
+          password: placeholder
+        pps_client:
+          target: placeholder_3
+          tooltip: "PPS client"
+          username: csirt3
+          password: placeholder
+    ben:
+      password: ben
+      vnc_clients:
+        soc_client:
+          target: placeholder_2
+          tooltip: "SOC client"
+          username: csirt2
+          password: placeholder
 
-learners_nginx_server_name: "learners.cyberrange.rocks"
 learners_nginx_listen: "80"
 learners_nginx_listen_ssl: "443 ssl" 
 learners_nginx_ssl_cert: ""

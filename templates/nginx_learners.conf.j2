@@ -5,7 +5,7 @@ upstream app_server {
 {% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
 server {
   listen {{ learners_nginx_listen }};
-  server_name {{ learners_nginx_server_name }};
+  server_name {{ learners_server_name }};
 
   location / {
     return 301 https://$host$request_uri;
@@ -22,7 +22,7 @@ server {
   listen 80;
 {% endif %}
 
-  server_name {{ learners_nginx_server_name }};
+  server_name {{ learners_server_name }};
   root        {{ learners_wwwroot }};
 
   location / {

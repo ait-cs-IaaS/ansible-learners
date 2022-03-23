@@ -1,7 +1,4 @@
 ---
-learners:
-  htpasswd: "/opt/learners/htpasswd"
-
 jwt:
   jwt_secret_key: "{{ learners_jwt_secret }}"
   jwt_for_vnc_access: False
@@ -9,20 +6,22 @@ jwt:
 database:
   db_uri: "sqlite:///learners_tracker.db"
 
-# mail:
-#   server: ""
-#   port: 587
-#   username: ""
-#   password: ""
-#   tls: True
-#   ssl: False
+venjix:
+  auth_secret: "{{ learners_venjix_secret }}"
+  url: "{{ learners_venjix_url }}"
 
-components:
-  venjix_auth_secret: "{{ learners_venjix_secret }}"
-  urls:
-    venjix: "{{ learners_venjix_url }}"
-    novnc: "{{ learners_novnc_url }}"
-    callback: "{{ learners_url }}"
-    documentation: "{{ learners_url }}/documentation"
-    exercises: "{{ learners_url }}/exercises"
-  {{ learners_users | to_nice_yaml }}
+documentation:
+  directory: "{{ learners_documentation_path }}"
+  endpoint: "{{ learners_documentation_endpoint }}"
+
+exercises:
+  directory: "{{ learners_exercises_path }}"
+  endpoint: "{{ learners_exercises_endpoint }}"
+
+callback:
+  endpoint: "{{ learners_callback_endpoint }}"
+
+novnc:
+  server: "{{ learners_novnc_url }}"
+
+{{ learners_users | to_nice_yaml(indent=2) }}

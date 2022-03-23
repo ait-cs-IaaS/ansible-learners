@@ -1,0 +1,34 @@
+---
+- name: "render ansible_config_{{ item.name }}.yaml from hugo_params.yaml.j2"
+  template:
+    owner: "{{ learners_user }}"
+    src: templates/hugo_params.yaml.j2
+    dest: "{{ learners_exercise_build_path }}/ansible_config_{{ item.name }}.yaml"
+    mode: preserve
+  become: true
+
+- name: "Build static documentation with hugo"
+  ansible.builtin.command:
+    cmd: "hugo --config \
+      {{ learners_exercise_build_path }}/base_config.yaml,\
+      {{ learners_exercise_build_path }}/docu_config.yaml,\
+      {{ learners_exercise_build_path }}/ansible_config_{{ item.name }}.yaml \
+      --destination {{ learners_documentation_path }}/{{ item.name }} \
+      --baseURL {{ learners_documentation_endpoint }}/{{ item.name }}"
+    chdir: "{{ learners_exercise_build_path }}"
+    creates: "{{ learners_documentation_path }}/{{ item.name }}/index.html"
+  become: true
+  become_user: "{{ learners_user }}"
+
+- name: "Build static exercises with hugo"
+  ansible.builtin.command:
+    cmd: "hugo --config \
+      {{ learners_exercise_build_path }}/base_config.yaml,\
+      {{ learners_exercise_build_path }}/exercises_config.yaml,\
+      {{ learners_exercise_build_path }}/ansible_config_{{ item.name }}.yaml \
+      --destination {{ learners_exercises_path }}/{{ item.name }} \
+      --baseURL {{ learners_exercises_endpoint }}/{{ item.name }}"
+    chdir: "{{ learners_exercise_build_path }}"
+    creates: "{{ learners_exercises_path }}/{{ item.name }}/index.html"
+  become: true
+  become_user: "{{ learners_user }}"

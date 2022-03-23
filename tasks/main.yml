@@ -5,8 +5,8 @@
 - include_tasks: learners.yml
   tags: [learners]
 
-# - include_tasks: exercises.yml
-#   tags: [exercises]
+- include_tasks: exercises.yml
+  tags: [exercises]
 
 - include_tasks: nginx.yml
   tags: [nginx]

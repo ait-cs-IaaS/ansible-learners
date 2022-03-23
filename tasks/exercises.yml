@@ -1,33 +1,29 @@
 ---
-
-- name: "Create documentation/exercises base config file"
-  ansible.builtin.template:
-    src: hugo_config.yaml.j2
-    dest: "{{ learners_exercises_paths.config }}/{{ item.key }}_config.yaml"
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    mode: 0644
+- name: "Clone Exercise to {{ learners_exercise_build_path }}"
+  ansible.builtin.git:
+    repo: "{{ learners_exercise_repository }}"
+    dest: "{{ learners_exercise_build_path }}"
+    version: "{{ learners_exercise_branch }}"
+    accept_hostkey: true
+    single_branch: true
+    recursive: false
+    force: true
+    depth: 1
   become: true
-  loop: "{{ hugo_vars['general'] | dict2items }}"
+  become_user: "{{ learners_user }}"
 
-- name: Deploy EXERCISES files per user
-  include_tasks: ./configure_hugo.yml
-  vars:
-    username: "{{ user_files.key }}"
-    params: "{{ user_files.value['exercises']['params'] }}"
-    type: "exercises"
-    general: "{{ hugo_vars['general']['exercises'] }}"
-  loop: "{{ hugo_vars['users'] | dict2items }}"
-  loop_control:
-    loop_var: user_files
+- name: "Clone Theme to {{ learners_exercise_build_path }}/themes/learners/"
+  ansible.builtin.git:
+    repo: "{{ learners_theme_repository }}"
+    dest: "{{ learners_exercise_build_path }}/themes/learners/"
+    version: "{{ learners_theme_branch }}"
+    accept_hostkey: true
+    single_branch: true
+    force: true
+    depth: 1
+  become: true
+  become_user: "{{ learners_user }}"
 
-- name: Deploy DOCUMENTATION files per user
-  include_tasks: ./configure_hugo.yml
-  vars:
-    username: "{{ user_files.key }}"
-    params: "{{ user_files.value['documentation']['params'] }}"
-    type: "documentation"
-    general: "{{ hugo_vars['general']['documentation'] }}"
-  loop: "{{ hugo_vars['users'] | dict2items }}"
-  loop_control:
-    loop_var: user_files
+- name: "Render exercise & documentation with hugo"
+  include_tasks: render_hugo.yml
+  loop: "{{ learners_exercise_params }}"

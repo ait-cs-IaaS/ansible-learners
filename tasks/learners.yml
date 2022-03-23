@@ -16,11 +16,12 @@
 
 - name: create learners_basepath
   ansible.builtin.file:
-    path: ["{{ learners_basepath }}", "{{ learners_basepath }}/webroot"]
+    path: "{{ item }}"
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     mode: 0755
     state: directory
+  with_items: ["{{ learners_basepath }}", "{{ learners_basepath }}/webroot"]
   become: true
 
 - name: Copying service-template to server
