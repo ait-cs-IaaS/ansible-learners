@@ -2,7 +2,7 @@
 learners_server_name: "learners.cyberrange.rocks"
 learners_url: "https://{{ learners_server_name }}"
 learners_venjix_url: "https://venjix.cyberrange"
-learners_novnc_url: "https://novnc.cyberrange"
+learners_novnc_url: "https://novnc.cyberrange.rocks"
 learners_documentation_path: "{{ learners_basepath }}/webroot/documentation"
 learners_documentation_endpoint: "/documentation"
 
