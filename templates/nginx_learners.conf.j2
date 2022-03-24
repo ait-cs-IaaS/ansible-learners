@@ -1,7 +1,11 @@
-{% if learners_nginx.ssl_cert and learners_nginx.ssl_key %}
+upstream app_server {
+  server unix:{{ learners_socket_path }};
+}
+
+{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
 server {
-  listen {{ learners_nginx.listen }};
-  server_name {{ learners_nginx.server_name }};
+  listen {{ learners_nginx_listen }};
+  server_name {{ learners_server_name }};
 
   location / {
     return 301 https://$host$request_uri;
@@ -10,25 +14,23 @@ server {
 {% endif %}
 
 server {
-{% if learners_nginx.ssl_cert and learners_nginx.ssl_key %}
-  listen {{ learners_nginx.listen_ssl }};
-  ssl_certificate     {{ learners_nginx.ssl_cert }};
-  ssl_certificate_key {{ learners_nginx.ssl_key }};
+{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
+  listen {{ learners_nginx_listen_ssl }};
+  ssl_certificate     {{ learners_nginx_ssl_cert }};
+  ssl_certificate_key {{ learners_nginx_ssl_key }};
 {% else %}
-  listen {{ learners_nginx.listen }};
+  listen {{ learners_nginx_listen }};
 {% endif %}
 
-  server_name {{ learners_nginx.server_name }};
-  root        {{ learners_nginx.wwwroot }};
+  server_name {{ learners_server_name }};
+  root        {{ learners_wwwroot }};
 
   location / {
-    
-            if ($http_origin ~* "^http?://192.168.56.106$") {
-                add_header Access-Control-Allow-Origin "$http_origin";
-            }
+    proxy_pass http://app_server;
+    include proxy_params;
+  }
 
-            proxy_pass http://unix:{{ flask_service.socket }};
-            include proxy_params;
-        }
-
+  location /static {
+    try_files $uri $uri/ =404;
+  }
 }

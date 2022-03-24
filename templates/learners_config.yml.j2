@@ -1,40 +1,27 @@
-# Common
-DEBUG: {{ learners_config.DEBUG | default(False)}}
-TESTING: {{ learners_config.TESTING | default(False)}}
-LANGUAGE: "{{ learners_config.LANGUAGE | default("en") }}"
+---
+jwt:
+  jwt_secret_key: "{{ learners_jwt_secret }}"
+  jwt_for_vnc_access: False
 
-# Appearance
-THEME: "{{ learners_config.THEME | default("dark") }}"
-BRANDING: {{ learners_config.BRANDING | default(True)}} # display logos on start screen
+database:
+  db_uri: "sqlite:///learners_tracker.db"
 
-# Authentication
-LEARNERS_HTPASSWD: "{{ learners_config.LEARNERS_HTPASSWD | default("/etc/nginx/htpasswd") }}" # location of passwd file: e.g. "/etc/nginx/htpasswd"
-VENJIX_AUTH_SECRET: "{{ VENJIX_AUTH_SECRET }}"
-JWT_SECRET_KEY: "{{ JWT_SECRET_KEY }}"
-JWT_TOKEN_LOCATION: ['headers', 'cookies']
-JWT_ACCESS_TOKEN_DURATION: {{ learners_config.JWT_ACCESS_TOKEN_DURATION | default(120)}} 
+venjix:
+  auth_secret: "{{ learners_venjix_secret }}"
+  url: "{{ learners_venjix_url }}"
 
-# Database
-SQLALCHEMY_DATABASE_URI: "{{ learners_config.SQLALCHEMY_DATABASE_URI | default("sqlite:///learners_tracker.db") }}"
-SQLALCHEMY_TRACK_MODIFICATIONS: False
+documentation:
+  directory: "{{ learners_documentation_path }}"
+  endpoint: "{{ learners_documentation_endpoint }}"
 
-# CORS Management
-CORS_HEADERS: "Content-Type"
-CORS_ORIGINS: "*"
-CORS_SUPPORTS_CREDENTIALS: True
+exercises:
+  directory: "{{ learners_exercises_path }}"
+  endpoint: "{{ learners_exercises_endpoint }}"
 
-# Learners Components
-VENJIX_URL:     "http://{{ learners_components.VENJIX_URL }}"
-DOCS_URL:       "http://{{ learners_components.DOCS_URL }}"
-EXERCISES_URL:  "http://{{ learners_components.EXERCISES_URL }}"
-CALLBACK_URL:   "http://{{ learners_components.CALLBACK_URL }}"
-VNC_URL:        "https://{{ learners_components.VNC_URL }}" 
+callback:
+  endpoint: "{{ learners_callback_endpoint }}"
 
-# User-dependent Ports
-PORT_LIST: 
-{% for dict_entry in learners_exercises_serverconfig | dict2items %}
-  {{ dict_entry.key }}:
-{% for type_entry in dict_entry.value | dict2items %}
-    {{ type_entry.key }}: "{{ type_entry.value['port'] }}"      
-{% endfor %}
-{% endfor %}
+novnc:
+  server: "{{ learners_novnc_url }}"
+
+{{ learners_users | to_nice_yaml(indent=2) }}

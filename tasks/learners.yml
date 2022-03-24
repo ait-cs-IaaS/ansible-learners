@@ -1,0 +1,65 @@
+---
+- name: Ensure learners build packages are installed
+  ansible.builtin.package:
+    name: "{{ learners_packages }}"
+    state: present
+    update_cache: true
+  become: true
+
+- name: create learners user
+  ansible.builtin.user:
+    name: "{{ learners_user }}"
+    home: "{{ learners_basepath }}"
+    create_home: false
+    shell: "/usr/sbin/nologin"
+  become: true
+
+- name: create learners_basepath
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0755
+    state: directory
+  with_items: ["{{ learners_basepath }}", "{{ learners_basepath }}/webroot"]
+  become: true
+
+- name: Copying service-template to server
+  template:
+    src: templates/learners.service.j2
+    dest: /etc/systemd/system/learners.service
+    mode: preserve
+  become: true
+
+- name: Install learners in virtualenv
+  pip:
+    name: "{{ learners_pip }}"
+    virtualenv: "{{ learners_basepath }}/venv"
+  become: true
+  become_user: "{{ learners_user }}"
+
+- name: write learners_config
+  template:
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    src: templates/learners_config.yml.j2
+    dest: "{{ learners_basepath }}/learners_config.yml"
+    mode: preserve
+  become: true
+  notify: "restart learners"
+
+- name: Copy static dir from site-packages to basepath
+  ansible.builtin.file:
+    owner: "{{ learners_user }}"
+    src: "{{ learners_basepath }}/venv/lib/python3.{{ ansible_python.version.minor }}/site-packages/learners/static"
+    dest: "{{ learners_basepath }}/webroot/static"
+    state: link
+  become: true
+
+- name: "start learners service"
+  systemd:
+    name: "learners.service"
+    state: "started"
+    enabled: true
+    daemon_reload: true
+  become: true
