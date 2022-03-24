@@ -41,6 +41,7 @@
 - name: write learners_config
   template:
     owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
     src: templates/learners_config.yml.j2
     dest: "{{ learners_basepath }}/learners_config.yml"
     mode: preserve
