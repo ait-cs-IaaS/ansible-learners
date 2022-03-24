@@ -25,21 +25,21 @@
   become: true
 
 - name: Copying service-template to server
-  template:
+  ansible.builtin.template:
     src: templates/learners.service.j2
     dest: /etc/systemd/system/learners.service
     mode: preserve
   become: true
 
 - name: Install learners in virtualenv
-  pip:
+  ansible.builtin.pip:
     name: "{{ learners_pip }}"
     virtualenv: "{{ learners_basepath }}/venv"
   become: true
   become_user: "{{ learners_user }}"
 
 - name: write learners_config
-  template:
+  ansible.builtin.template:
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     src: templates/learners_config.yml.j2
@@ -57,7 +57,7 @@
   become: true
 
 - name: "start learners service"
-  systemd:
+  ansible.builtin.systemd:
     name: "learners.service"
     state: "started"
     enabled: true

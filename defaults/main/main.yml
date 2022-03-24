@@ -27,9 +27,9 @@ learners_theme_repository: "https://{{ learners_github_pat }}@github.com/ait-cs-
 learners_exercise_build_path: "{{ learners_basepath }}/exercise_repository"
 
 learners_exercise_params:
-  - { name: 'user1', params: {'name': 'Franz Joseph Karl, aus dem Haus Habsburg-Lothringen'}}
-  - { name: 'user2', params: {'name': 'Elisabeth Amalie Eugenie von Wittelsbach'}}
-  - { name: 'user3', params: {'name': 'Kimberly Ann Hart'}}
+  - {name: 'ben', params: {'name': 'Franz Joseph Karl, aus dem Haus Habsburg-Lothringen'}}
+  - {name: 'test', params: {'name': 'Elisabeth Amalie Eugenie von Wittelsbach'}}
+  - {name: 'user3', params: {'name': 'Kimberly Ann Hart'}}
 
 
 learners_basepath: "/opt/learners"
@@ -59,7 +59,7 @@ learners_users:
           password: placeholder
 
 learners_nginx_listen: "80"
-learners_nginx_listen_ssl: "443 ssl" 
+learners_nginx_listen_ssl: "443 ssl"
 learners_nginx_ssl_cert: ""
 learners_nginx_ssl_key: ""
 

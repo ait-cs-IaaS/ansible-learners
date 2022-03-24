@@ -1,12 +1,15 @@
 ---
 - name: load default vars
-  include_vars: learners.yml
+  ansible.builtin.include_vars: learners.yml
 
-- include_tasks: learners.yml
+- name: install learners
+  ansible.builtin.include_tasks: learners.yml
   tags: [learners]
 
-- include_tasks: exercises.yml
+- name: configure exercises
+  ansible.builtin.include_tasks: exercises.yml
   tags: [exercises]
 
-- include_tasks: nginx.yml
+- name: configure nginx
+  ansible.builtin.include_tasks: nginx.yml
   tags: [nginx]

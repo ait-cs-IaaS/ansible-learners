@@ -1,7 +1,0 @@
----
-
-- src: git@github.com:ait-cs-IaaS/ansible-flask.git
-  path: /etc/ansible/roles/cyber-range/ansible-flask
-  scm: git
-  version: master
-  name: ansible-flask

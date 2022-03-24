@@ -1,6 +1,6 @@
 ---
 - name: "render ansible_documentation_{{ item.name }}.yaml from hugo_params.yaml.j2"
-  template:
+  ansible.builtin.template:
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     src: templates/hugo_params.yaml.j2
@@ -12,7 +12,7 @@
     base_url: "{{ learners_documentation_endpoint }}"
 
 - name: "render ansible_exercises_{{ item.name }}.yaml from hugo_params.yaml.j2"
-  template:
+  ansible.builtin.template:
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     src: templates/hugo_params.yaml.j2
