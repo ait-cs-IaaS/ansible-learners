@@ -1,3 +1,7 @@
+---
+baseURL: "{{ base_url }}"
+publishDir: "{{ publish_dir }}"
+
 params:
   userconfig:
     {{ item.params | to_nice_yaml(indent=2) | trim | indent(4) }}
