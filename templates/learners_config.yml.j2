@@ -4,7 +4,7 @@ jwt:
   jwt_for_vnc_access: False
 
 database:
-  db_uri: "sqlite:///learners_tracker.db"
+  db_uri: "{{ learners_db_uri }}"
 
 venjix:
   auth_secret: "{{ learners_venjix_secret }}"

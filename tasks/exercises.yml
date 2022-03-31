@@ -1,5 +1,5 @@
 ---
-- name: "Clone Exercise to {{ learners_exercise_build_path }}"
+- name: Clone Exercise to {{ learners_exercise_build_path }}
   ansible.builtin.git:
     repo: "{{ learners_exercise_repository }}"
     dest: "{{ learners_exercise_build_path }}"
@@ -12,7 +12,7 @@
   become: true
   become_user: "{{ learners_user }}"
 
-- name: "Clone Theme to {{ learners_exercise_build_path }}/themes/learners/"
+- name: Clone Theme to {{ learners_exercise_build_path }}/themes/learners/
   ansible.builtin.git:
     repo: "{{ learners_theme_repository }}"
     dest: "{{ learners_exercise_build_path }}/themes/learners/"
@@ -24,6 +24,6 @@
   become: true
   become_user: "{{ learners_user }}"
 
-- name: "Render exercise & documentation with hugo"
+- name: Render exercise & documentation with hugo
   include_tasks: render_hugo.yml
   loop: "{{ learners_exercise_params }}"

@@ -1,6 +1,7 @@
+---
 galaxy_info:
   role_name: learners
-  author: Benjamin Akhras
+  author: benjamin_akhras
   description: Installs AIT learners
   company: Austrian Institute of Technology
 
