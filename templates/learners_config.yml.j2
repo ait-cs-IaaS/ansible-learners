@@ -1,4 +1,28 @@
 ---
+
+learners:
+{% if learners_theme is defined %}
+  theme: "{{ learners_theme }}"
+{% endif %}
+{% if learners_branding is defined %}
+  branding: "{{ learners_branding }}"
+{% endif %}
+{% if learners_language is defined %}
+  language: "{{ learners_language }}"
+{% endif %}
+{% if learners_login_headline is defined %}
+  login_headline: "{{ learners_login_headline }}"
+{% endif %}
+{% if learners_login_headline_highlight is defined %}
+  login_headline_highlight: "{{ learners_login_headline_highlight }}"
+{% endif %}
+{% if learners_welcome_text is defined %}
+  welcome_text: "{{ learners_welcome_text }}"
+{% endif %}
+{% if learners_login_text is defined %}
+  login_text: "{{ learners_login_text }}"
+{% endif %}
+
 jwt:
   jwt_secret_key: "{{ learners_jwt_secret }}"
   jwt_for_vnc_access: False
