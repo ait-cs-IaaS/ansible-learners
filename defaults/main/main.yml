@@ -70,7 +70,7 @@ learners_packages:
 
 # learners styling
 learners_theme: light
-learners_branding: True
+learners_branding: true
 # learners_language: en
 # learners_login_headline:
 # learners_login_headline_highlight:
