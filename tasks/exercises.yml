@@ -27,3 +27,4 @@
 - name: Render exercise & documentation with hugo
   include_tasks: render_hugo.yml
   loop: "{{ learners_exercise_params }}"
+  notify: restart learners
