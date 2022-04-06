@@ -31,7 +31,7 @@ learners_exercise_params:
   - {name: user3, params: {name: Kimberly Ann Hart}}
 
 learners_basepath: /opt/learners
-learners_db_uri: sqlite:///learners.db
+learners_db_uri: "sqlite://{{ learners_basepath }}/learners.db"
 
 learners_users:
   users:
