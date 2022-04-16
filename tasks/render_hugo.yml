@@ -32,6 +32,7 @@
     creates: "{{ learners_documentation_path }}/{{ item.name }}/index.html"
   become: true
   become_user: "{{ learners_user }}"
+  notify: restart learners
 
 - name: Build static exercises with hugo
   ansible.builtin.command:
@@ -42,3 +43,4 @@
     creates: "{{ learners_exercises_path }}/{{ item.name }}/index.html"
   become: true
   become_user: "{{ learners_user }}"
+  notify: restart learners
