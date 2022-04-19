@@ -18,7 +18,7 @@ learners_github_pat: ""
 learners_venjix_secret: "{{ 10 | to_uuid }}"
 learners_jwt_secret: "{{ 42 | to_uuid }}"
 
-learners_pip_version: 0.3.1
+learners_pip_version: 0.4.0
 learners_pip: https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz
 learners_exercise_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_exercises.git
 learners_theme_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_theme.git
