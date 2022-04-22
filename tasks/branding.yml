@@ -1,0 +1,30 @@
+---
+- name: Copy CSS
+  ansible.builtin.copy:
+    src: "{{ learners_branding_scss }}"
+    dest: "{{ learners_install_path }}/static/css/theme_{{ learners_theme }}.scss"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: preserve
+  become: true
+  when: learners_branding_scss
+
+- name: Replace Logo
+  ansible.builtin.copy:
+    src: "{{ learners_branding_logo }}"
+    dest: "{{ learners_install_path }}/templates/partials/logo.html"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: preserve
+  become: true
+  when: learners_branding_logo
+
+- name: Replace Login
+  ansible.builtin.copy:
+    src: "{{ learners_branding_login }}"
+    dest: "{{ learners_install_path }}/templates/login.html"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: preserve
+  become: true
+  when: learners_branding_login

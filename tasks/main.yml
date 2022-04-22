@@ -5,6 +5,9 @@
 - name: install learners
   ansible.builtin.include_tasks: learners.yml
   tags: [learners]
+- name: learners branding
+  ansible.builtin.include_tasks: branding.yml
+  tags: [learners, branding]
 - name: configure exercises
   ansible.builtin.include_tasks: exercises.yml
   tags: [exercises]

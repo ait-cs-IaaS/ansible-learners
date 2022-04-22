@@ -21,7 +21,10 @@
     group: "{{ learners_user }}"
     mode: 0755
     state: directory
-  with_items: ["{{ learners_basepath }}", "{{ learners_basepath }}/webroot"]
+  with_items:
+    - "{{ learners_basepath }}/"
+    - "{{ learners_wwwroot }}/"
+    - "{{ learners_uploaddir }}/"
   become: true
 
 - name: Copying service-template to server
@@ -52,7 +55,7 @@
 - name: Copy static dir from site-packages to basepath
   ansible.builtin.file:
     owner: "{{ learners_user }}"
-    src: "{{ learners_basepath }}/venv/lib/python3.{{ ansible_python.version.minor }}/site-packages/learners/static"
+    src: "{{ learners_install_path }}/static"
     dest: "{{ learners_basepath }}/webroot/static"
     state: link
   become: true
