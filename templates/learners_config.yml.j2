@@ -19,6 +19,7 @@ learners:
 {% if learners_login_text is defined %}
   login_text: "{{ learners_login_text }}"
 {% endif %}
+  upload_folder: "{{ learners_uploaddir }}"
 
 jwt:
   jwt_secret_key: "{{ learners_jwt_secret }}"
