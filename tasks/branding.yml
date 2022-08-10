@@ -7,7 +7,7 @@
     group: "{{ learners_user }}"
     mode: preserve
   become: true
-  when: learners_branding_scss
+  when: learners_branding_scss is defined
 
 - name: Replace Logo
   ansible.builtin.copy:
@@ -17,7 +17,7 @@
     group: "{{ learners_user }}"
     mode: preserve
   become: true
-  when: learners_branding_logo
+  when: learners_branding_logo is defined
 
 - name: Replace Login
   ansible.builtin.copy:
@@ -27,4 +27,4 @@
     group: "{{ learners_user }}"
     mode: preserve
   become: true
-  when: learners_branding_login
+  when: learners_branding_login is defined
