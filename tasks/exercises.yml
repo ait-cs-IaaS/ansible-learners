@@ -1,4 +1,9 @@
 ---
+- name: Check github pat
+  debug:
+    msg: "GITHUB PAT ist unset please set `learners_github_pat`"
+  when: learners_github_pat == ""
+
 - name: Clone Exercise to {{ learners_exercise_build_path }}
   ansible.builtin.git:
     repo: "{{ learners_exercise_repository }}"
@@ -11,6 +16,8 @@
     depth: 1
   become: true
   become_user: "{{ learners_user }}"
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
 
 - name: Clone Theme to {{ learners_exercise_build_path }}/themes/learners/
   ansible.builtin.git:
@@ -23,6 +30,8 @@
     depth: 1
   become: true
   become_user: "{{ learners_user }}"
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
 
 - name: Render exercise & documentation with hugo
   include_tasks: render_hugo.yml
