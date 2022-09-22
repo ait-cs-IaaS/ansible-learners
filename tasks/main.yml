@@ -1,16 +1,14 @@
 ---
-- name: load default vars
+- name: Load default vars
   ansible.builtin.include_vars: learners.yml
 
-- name: install learners
+- name: Install learners
   ansible.builtin.include_tasks: learners.yml
   tags: [learners]
-
-- name: learners branding
+- name: Learners branding
   ansible.builtin.include_tasks: branding.yml
   tags: [learners, branding]
-
-- name: configure exercises
+- name: Configure exercises
   ansible.builtin.include_tasks: exercises.yml
   tags: [exercises]
   when: (learners_deploy.full | default(False) ) or 
@@ -18,6 +16,6 @@
         (learners_deploy.exercises | default(False) ) or 
         (learners_deploy.presentations | default(False) )
 
-- name: configure nginx
+- name: Configure nginx
   ansible.builtin.include_tasks: nginx.yml
   tags: [nginx]

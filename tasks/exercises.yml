@@ -1,7 +1,7 @@
 ---
 - name: Check github pat
   debug:
-    msg: "GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`"
+    msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
   when: learners_github_pat == ""
 
 - name: Clone Exercise to {{ learners_exercise_build_path }}
@@ -32,7 +32,7 @@
     depth: 1
   environment:
     GIT_TERMINAL_PROMPT: "0"
-  when: learners_theme_repository is defined  
+  when: learners_theme_repository is defined
 
 - name: Ensure exercises build packages are installed
   become: true
@@ -50,7 +50,6 @@
     mode: 0755
     state: directory
 
-
 - name: Build static content
   become: true
   become_user: "{{ learners_user }}"
@@ -61,4 +60,4 @@
   retries: 3
   delay: 5
   until: "'goroutine' not in build_status.stdout_lines"
-  notify: restart learners
+  notify: Restart learners

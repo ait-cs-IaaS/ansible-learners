@@ -1,5 +1,5 @@
 ---
-learners_user: "learners"
+learners_user: learners
 learners_basepath: /opt/learners
 
 learners_server_name: learners.cyberrange.rocks

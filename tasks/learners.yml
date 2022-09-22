@@ -34,7 +34,7 @@
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.pip:
-    name: "https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz"
+    name: https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz
     virtualenv: "{{ learners_basepath }}/venv"
     virtualenv_command: python3 -m venv
 
@@ -46,9 +46,9 @@
     src: templates/config.yml.j2
     dest: "{{ learners_basepath }}/config.yml"
     mode: preserve
-  notify: restart learners
+  notify: Restart learners
 
-- name: start learners service
+- name: Start learners service
   ansible.builtin.systemd:
     name: learners.service
     state: started

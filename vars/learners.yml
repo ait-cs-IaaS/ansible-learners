@@ -14,12 +14,11 @@ flask_service_execstart: >
 #   scss: True
 
 learners_deploy:
-  full: True
+  full: true
   # sidebar: True
   # documentation: True
   # exercises: False
   # presentations: True
-
 
 learners_users:
   user1:
