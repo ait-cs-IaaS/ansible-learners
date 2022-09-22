@@ -1,0 +1,67 @@
+---
+
+jwt:
+  {{ learners_config_jwt | to_nice_yaml(indent=2) | trim | indent(2) }}
+
+database:
+  {{ learners_config_database | to_nice_yaml(indent=2) | trim | indent(2) }}
+
+users:
+  {{ learners_users | to_nice_yaml(indent=2) | trim | indent(2) }}
+
+
+
+
+{% if learners_config_learners is defined %}
+learners:
+  {{ learners_config_learners | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_venjix is defined %}
+venjix:
+  {{ learners_config_venjix | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_callback is defined %}
+callback:
+  {{ learners_config_callback | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_novnc is defined %}
+novnc:
+  {{ learners_config_novnc | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_statics is defined %}
+statics:
+  {{ learners_config_statics | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_staticsites is defined %}
+staticsites:
+  {{ learners_config_staticsites | to_nice_yaml(indent=2) | trim | indent(2) }}
+{% endif %}
+
+{% if learners_config_serve_documentation is defined %}
+serve_documentation: {{ learners_config_serve_documentation }}
+{% endif %}
+
+{% if learners_config_serve_presentations is defined %}
+serve_presentations: {{ learners_config_serve_presentations }}
+{% endif %}
+
+{% if learners_config_serve_exercises is defined %}
+serve_exercises: {{ learners_config_serve_exercises }}
+{% endif %}
+
+{% if learners_config_exercise_json is defined %}
+exercise_json: {{ learners_config_exercise_json }}
+{% endif %}
+
+{% if learners_config_questionaire_json is defined %}
+questionaire_json: {{ learners_config_questionaire_json }}
+{% endif %}
+
+{% if learners_config_questionaires_questions_json is defined %}
+questionaires_questions_json: {{ learners_config_questionaires_questions_json }}
+{% endif %}

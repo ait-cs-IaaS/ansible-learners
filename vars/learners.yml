@@ -1,17 +1,9 @@
 ---
-flask_app_name: learners
-
-learners_user: learners
-
-learners_wwwroot: "{{ learners_basepath }}/webroot"
-learners_uploaddir: "{{ learners_wwwroot }}/uploads"
 learners_socket_path: /var/run/learners/learners.sock
-
 learners_install_path: "{{ learners_basepath }}/venv/lib/python3.{{ ansible_python.version.minor }}/site-packages/learners"
 
 flask_service_execstart: >
   {{ learners_basepath }}/venv/bin/gunicorn
-  --workers 5
   learners:app
   --bind unix:{{ learners_socket_path }}
   --pythonpath={{ learners_basepath }}/venv/lib/python3
