@@ -26,3 +26,15 @@ learners_nginx_ssl_key: ""
 learners_packages:
   - python3-venv
   - nginx
+
+# learners_branding:
+#   login: True
+#   logo: True
+#   scss: True
+
+learners_deploy:
+  full: true
+  # sidebar: True
+  # documentation: True
+  # exercises: False
+  # presentations: True

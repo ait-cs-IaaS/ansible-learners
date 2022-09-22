@@ -40,3 +40,31 @@ learners_config_serve_presentations: "{{ (learners_deploy.full | default(False))
 learners_config_exercise_json: "{{ learners_wwwroot }}/hugo/exercises.json"
 learners_config_questionaire_json: "{{ learners_wwwroot }}/hugo/questionaires.json"
 learners_config_questionaires_questions_json: "{{ learners_wwwroot }}/hugo/questionaires_questions.json"
+
+learners_users:
+  user1:
+    password: user1
+    vnc_clients:
+      soc_client:
+        target: placeholder_1
+        tooltip: SOC client
+        username: csirt1
+        password: placeholder
+      pps_client:
+        target: placeholder_3
+        tooltip: PPS client
+        username: csirt3
+        password: placeholder
+  user2:
+    password: user2
+    vnc_clients:
+      soc_client:
+        target: placeholder_1
+        tooltip: SOC client
+        username: csirt1
+        password: placeholder
+      pps_client:
+        target: placeholder_3
+        tooltip: PPS client
+        username: csirt3
+        password: placeholder
