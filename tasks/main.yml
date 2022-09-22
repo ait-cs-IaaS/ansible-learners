@@ -5,12 +5,19 @@
 - name: install learners
   ansible.builtin.include_tasks: learners.yml
   tags: [learners]
+
 - name: learners branding
   ansible.builtin.include_tasks: branding.yml
   tags: [learners, branding]
+
 - name: configure exercises
   ansible.builtin.include_tasks: exercises.yml
   tags: [exercises]
+  when: (learners_deploy.full | default(False) ) or 
+        (learners_deploy.documentation | default(False) ) or 
+        (learners_deploy.exercises | default(False) ) or 
+        (learners_deploy.presentations | default(False) )
+
 - name: configure nginx
   ansible.builtin.include_tasks: nginx.yml
   tags: [nginx]
