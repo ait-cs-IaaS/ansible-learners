@@ -1,0 +1,11 @@
+
+learners_wwwroot: "{{ learners_basepath }}/webroot"
+learners_uploaddir: "{{ learners_wwwroot }}/uploads"
+
+exercises_packages:
+  - hugo>=0.68.3
+
+# learners_exercise_params:
+#   - {name: ben, params: {name: "Franz Joseph Karl, aus dem Haus Habsburg-Lothringen"}}
+#   - {name: test, params: {name: Elisabeth Amalie Eugenie von Wittelsbach}}
+#   - {name: user3, params: {name: Kimberly Ann Hart}}
