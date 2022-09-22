@@ -32,9 +32,12 @@ learners_config_statics:
 #     title: ""
 #     icon: "icon_web"
 
-learners_config_serve_documentation: True
-learners_config_serve_exercises: True
-learners_config_serve_presentations: True
+learners_config_serve_documentation:  "{{ ( learners_deploy['full'] | default(False) ) or 
+                                      ( learners_deploy['documentation'] | default(False) ) }}"
+learners_config_serve_exercises:      "{{ ( learners_deploy['full'] | default(False) ) or 
+                                      ( learners_deploy['exercises'] | default(False) ) }}"
+learners_config_serve_presentations:  "{{ ( learners_deploy['full'] | default(False) ) or 
+                                      ( learners_deploy['presentations'] | default(False) ) }}"
 
 learners_config_exercise_json: "{{ learners_wwwroot }}/hugo/exercises.json"
 learners_config_questionaire_json: "{{ learners_wwwroot }}/hugo/questionaires.json"
