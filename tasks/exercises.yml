@@ -1,38 +1,64 @@
 ---
 - name: Check github pat
   debug:
-    msg: "GITHUB PAT ist unset please set `learners_github_pat`"
+    msg: "GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`"
   when: learners_github_pat == ""
 
 - name: Clone Exercise to {{ learners_exercise_build_path }}
+  become: true
+  become_user: "{{ learners_user }}"
   ansible.builtin.git:
     repo: "{{ learners_exercise_repository }}"
     dest: "{{ learners_exercise_build_path }}"
-    version: "{{ learners_exercise_branch }}"
+    version: "{{ learners_exercise_branch | default('master') }}"
     accept_hostkey: true
     single_branch: true
     recursive: false
     force: true
     depth: 1
-  become: true
-  become_user: "{{ learners_user }}"
   environment:
     GIT_TERMINAL_PROMPT: "0"
 
 - name: Clone Theme to {{ learners_exercise_build_path }}/themes/learners/
+  become: true
+  become_user: "{{ learners_user }}"
   ansible.builtin.git:
     repo: "{{ learners_theme_repository }}"
     dest: "{{ learners_exercise_build_path }}/themes/learners/"
-    version: "{{ learners_theme_branch }}"
+    version: "{{ learners_theme_branch | default('master') }}"
     accept_hostkey: true
     single_branch: true
     force: true
     depth: 1
-  become: true
-  become_user: "{{ learners_user }}"
   environment:
     GIT_TERMINAL_PROMPT: "0"
+  when: learners_theme_repository is defined  
 
-- name: Render exercise & documentation with hugo
-  include_tasks: render_hugo.yml
-  loop: "{{ learners_exercise_params }}"
+- name: Ensure exercises build packages are installed
+  become: true
+  ansible.builtin.package:
+    name: "{{ exercises_packages }}"
+    state: present
+    update_cache: true
+
+- name: Create {{ learners_wwwroot }}
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_wwwroot }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0755
+    state: directory
+
+
+- name: Build static content
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.command: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }}"
+  args:
+    chdir: "{{ learners_exercise_build_path }}"
+  register: build_status
+  retries: 3
+  delay: 5
+  until: "'goroutine' not in build_status.stdout_lines"
+  notify: restart learners
