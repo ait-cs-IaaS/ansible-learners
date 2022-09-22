@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=notify
 User={{ learners_user }}
-Environment=LEARNERS_CONFIG={{ learners_basepath }}/learners_config.yml
+Environment=LEARNERS_CONFIG={{ learners_basepath }}/config.yml
 RuntimeDirectory=learners
 WorkingDirectory={{ learners_basepath }}
 ExecStart={{ flask_service_execstart }}
