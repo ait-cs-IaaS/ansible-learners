@@ -2,6 +2,8 @@
 learners_wwwroot: "{{ learners_basepath }}/webroot"
 learners_uploaddir: "{{ learners_wwwroot }}/uploads"
 
+exercise_force_rebuild: true
+
 exercises_packages:
   - hugo>=0.68.3
 

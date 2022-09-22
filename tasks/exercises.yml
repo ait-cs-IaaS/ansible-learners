@@ -1,6 +1,6 @@
 ---
 - name: Check github pat
-  debug:
+  ansible.builtin.debug:
     msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
   when: learners_github_pat == ""
 
@@ -50,12 +50,20 @@
     mode: 0755
     state: directory
 
+- name: Remove build flag
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_wwwroot }}/hugo/base"
+    state: absent
+  when: exercise_force_rebuild
+
 - name: Build static content
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.command: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }}"
   args:
     chdir: "{{ learners_exercise_build_path }}"
+    creates: "{{ learners_wwwroot }}/hugo/base"
   register: build_status
   retries: 3
   delay: 5

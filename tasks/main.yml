@@ -11,10 +11,11 @@
 - name: Configure exercises
   ansible.builtin.include_tasks: exercises.yml
   tags: [exercises]
-  when: (learners_deploy.full | default(False) ) or 
-        (learners_deploy.documentation | default(False) ) or 
-        (learners_deploy.exercises | default(False) ) or 
-        (learners_deploy.presentations | default(False) )
+  when: >
+    ( learners_deploy.full | default(False) ) or
+    ( learners_deploy.documentation | default(False) ) or
+    ( learners_deploy.exercises | default(False) ) or
+    ( learners_deploy.presentations | default(False) )
 
 - name: Configure nginx
   ansible.builtin.include_tasks: nginx.yml
