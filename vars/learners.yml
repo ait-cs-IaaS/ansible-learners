@@ -8,6 +8,10 @@ flask_service_execstart: >
   --bind unix:{{ learners_socket_path }}
   --pythonpath={{ learners_basepath }}/venv/lib/python3
 
+# learners_branding:
+#   login: True
+#   logo: True
+#   scss: True
 
 learners_deploy:
   full: True
