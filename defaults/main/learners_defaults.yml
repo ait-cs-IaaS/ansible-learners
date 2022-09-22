@@ -13,8 +13,7 @@ learners_github_pat: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') }}"
 
 learners_exercise_build_path: "{{ learners_basepath }}/exercise_repository"
 
-learners_exercise_repository: https://{{ learners_github_pat }}@github.com/mitcdh/itc-exercises.git
-# learners_exercise_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_exercises.git
+learners_exercise_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_exercises.git
 # learners_exercise_branch: master
 
 # learners_theme_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_theme.git

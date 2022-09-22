@@ -7,7 +7,7 @@
     - /etc/nginx/sites-enabled/default
     - /etc/nginx/conf.d
   become: true
-  notify: restart nginx
+  notify: Restart nginx
 
 - name: Add NGINX configuration file
   ansible.builtin.template:
@@ -15,4 +15,4 @@
     dest: /etc/nginx/sites-enabled/learners.conf
     mode: 0644
   become: true
-  notify: restart nginx
+  notify: Restart nginx
