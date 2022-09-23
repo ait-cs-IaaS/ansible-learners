@@ -7,3 +7,7 @@ flask_service_execstart: >
   learners:app
   --bind unix:{{ learners_socket_path }}
   --pythonpath={{ learners_basepath }}/venv/lib/python3
+
+learners_packages:
+  - python3-venv
+  - nginx

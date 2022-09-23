@@ -7,7 +7,9 @@
     owner: "{{ learners_user }}"
     group: "{{ learners_user }}"
     mode: preserve
-  when: learners_branding.scss | default(False)
+  when:
+    - learners_branding.scss | default(False)
+    - learners_config_learners is defined
 
 - name: Replace Logo
   become: true
