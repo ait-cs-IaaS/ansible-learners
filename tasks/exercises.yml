@@ -19,7 +19,7 @@
   environment:
     GIT_TERMINAL_PROMPT: "0"
 
-- name: Clone Theme to {{ learners_exercise_build_path }}/themes/learners/
+- name: Clone Theme to 'learners_exercise_build_path'/themes/learners/
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.git:
@@ -40,6 +40,11 @@
     name: "{{ exercises_packages }}"
     state: present
     update_cache: true
+
+- name: Ensure hugo is installed
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ hugo_install_url }}"
 
 - name: Create {{ learners_wwwroot }}
   become: true

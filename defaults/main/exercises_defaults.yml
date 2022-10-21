@@ -4,8 +4,9 @@ learners_uploaddir: "{{ learners_wwwroot }}/uploads"
 
 exercise_force_rebuild: true
 
-exercises_packages:
-  - hugo>=0.68.3
+hugo_install_url: "https://github.com/gohugoio/hugo/releases/download/v0.104.3/hugo_0.104.3_linux-amd64.deb"
+
+exercises_packages: []
 
 # learners_exercise_params:
 #   - {name: ben, params: {name: "Franz Joseph Karl, aus dem Haus Habsburg-Lothringen"}}
