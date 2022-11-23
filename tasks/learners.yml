@@ -34,7 +34,7 @@
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.pip:
-    name: https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/Learners-{{ learners_pip_version }}.tar.gz
+    name: https://github.com/ait-cs-IaaS/learners/releases/download/{{ learners_pip_version }}/ait-learners-{{ learners_pip_version }}.tar.gz
     virtualenv: "{{ learners_basepath }}/venv"
     virtualenv_command: python3 -m venv
 
