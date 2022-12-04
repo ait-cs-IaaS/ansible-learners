@@ -19,7 +19,7 @@
   environment:
     GIT_TERMINAL_PROMPT: "0"
 
-- name: Clone Theme to 'learners_exercise_build_path'/themes/learners/
+- name: Clone Theme
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.git:
