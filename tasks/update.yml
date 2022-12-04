@@ -1,0 +1,121 @@
+---
+
+- name: Check github pat
+  ansible.builtin.debug:
+    msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
+  when: learners_github_pat == ""
+
+- name: Create backup directory
+  ansible.builtin.file:
+    path: "{{ learners_local_directory }}/backup/"
+    state: directory
+  delegate_to: localhost
+
+- name: Backup current datebase
+  become: true
+  ansible.builtin.fetch:
+    src: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
+    dest: "{{ learners_local_directory }}/backup/learners_db_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.db"
+    fail_on_missing: false
+    flat: true
+
+- name: Remove learners database
+  become: true
+  ansible.builtin.file:
+    path: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
+    state: absent
+  when: not learners_db_preserve
+
+- name: Push local database to server
+  become: true
+  ansible.builtin.copy:
+    src: "{{ learners_local_directory }}/{{ learners_local_db }}"
+    dest: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
+  when: learners_local_db is defined
+
+- name: Remove current exercise folder
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_exercise_build_path }}"
+    state: absent
+
+- name: Clone Exercise to {{ learners_exercise_build_path }}
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.git:
+    repo: "{{ learners_exercise_repository }}"
+    dest: "{{ learners_exercise_build_path }}"
+    version: "{{ learners_exercise_branch | default('master') }}"
+    accept_hostkey: true
+    single_branch: true
+    recursive: false
+    force: true
+    depth: 1
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
+
+- name: Clone Theme to {{ learners_exercise_build_path }}/themes/learners/
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.git:
+    repo: "{{ learners_theme_repository }}"
+    dest: "{{ learners_exercise_build_path }}/themes/learners/"
+    version: "{{ learners_theme_branch | default('master') }}"
+    accept_hostkey: true
+    single_branch: true
+    force: true
+    depth: 1
+  environment:
+    GIT_TERMINAL_PROMPT: "0"
+  when: learners_theme_repository is defined
+
+- name: Ensure exercises build packages are installed
+  become: true
+  ansible.builtin.package:
+    name: "{{ exercises_packages }}"
+    state: present
+    update_cache: true
+
+- name: Ensure hugo is installed
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ hugo_install_url }}"
+
+- name: Create {{ learners_wwwroot }}
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_wwwroot }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0755
+    state: directory
+
+- name: Remove current static content
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_wwwroot }}/hugo"
+    state: absent
+
+- name: Build static content
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.command: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }}"
+  args:
+    chdir: "{{ learners_exercise_build_path }}"
+    creates: "{{ learners_wwwroot }}/hugo/base"
+  register: build_status
+  retries: 3
+  delay: 5
+  until: "'goroutine' not in build_status.stdout_lines"
+  notify: Restart learners
+
+- name: Update learners config
+  become: true
+  ansible.builtin.template:
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    src: templates/config.yml.j2
+    dest: "{{ learners_basepath }}/config.yml"
+    mode: preserve
+  notify: Restart learners
+
