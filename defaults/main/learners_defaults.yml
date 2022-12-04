@@ -2,12 +2,16 @@
 learners_user: learners
 learners_basepath: /opt/learners
 
+# learners_local_directory: "{{ lookup('env','LOCAL_PACKAGE_ANSIBLE_PATH') }}/data/learners/"
+# learners_local_db: 
+learners_db_preserve: true
+
 learners_server_name: learners.cyberrange.rocks
 learners_url: https://{{ learners_server_name }}
 learners_venjix_url: https://venjix.cyberrange
 learners_novnc_url: https://novnc.cyberrange.rocks
 
-learners_pip_version: 0.6.0
+learners_pip_version: 0.6.4
 
 learners_github_pat: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') }}"
 
