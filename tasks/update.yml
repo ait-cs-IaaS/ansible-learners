@@ -1,5 +1,4 @@
 ---
-
 - name: Check github pat
   ansible.builtin.debug:
     msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
@@ -9,6 +8,7 @@
   ansible.builtin.file:
     path: "{{ learners_local_directory }}/backup/"
     state: directory
+    mode: 0755
   delegate_to: localhost
 
 - name: Backup current datebase
@@ -31,6 +31,9 @@
   ansible.builtin.copy:
     src: "{{ learners_local_directory }}/{{ learners_local_db }}"
     dest: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: 0644
   when: learners_local_db is defined
 
 - name: Remove current exercise folder
@@ -118,4 +121,3 @@
     dest: "{{ learners_basepath }}/config.yml"
     mode: preserve
   notify: Restart learners
-

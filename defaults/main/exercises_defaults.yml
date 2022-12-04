@@ -4,7 +4,7 @@ learners_uploaddir: "{{ learners_wwwroot }}/uploads"
 
 exercise_force_rebuild: true
 
-hugo_install_url: "https://github.com/gohugoio/hugo/releases/download/v0.104.3/hugo_0.104.3_linux-amd64.deb"
+hugo_install_url: https://github.com/gohugoio/hugo/releases/download/v0.104.3/hugo_0.104.3_linux-amd64.deb
 
 exercises_packages: []
 

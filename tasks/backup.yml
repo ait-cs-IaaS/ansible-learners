@@ -1,5 +1,4 @@
 ---
-
 - name: Backup current datebase
   become: true
   ansible.builtin.fetch:

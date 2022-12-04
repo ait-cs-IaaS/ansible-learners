@@ -3,7 +3,7 @@ learners_user: learners
 learners_basepath: /opt/learners
 
 # learners_local_directory: "{{ lookup('env','LOCAL_PACKAGE_ANSIBLE_PATH') }}/data/learners/"
-# learners_local_db: 
+# learners_local_db:
 learners_db_preserve: true
 
 learners_server_name: learners.cyberrange.rocks
