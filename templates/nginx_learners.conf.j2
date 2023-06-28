@@ -13,6 +13,32 @@ server {
 }
 {% endif %}
 
+# backend
+server {
+  listen  5000 ssl;
+{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
+  ssl_certificate     {{ learners_nginx_ssl_cert }};
+  ssl_certificate_key {{ learners_nginx_ssl_key }};
+{% endif %}
+
+  proxy_read_timeout 24h;
+  proxy_set_header Connection '';
+  proxy_http_version 1.1;
+  chunked_transfer_encoding off;
+  proxy_buffering off;
+  proxy_cache off;
+
+  server_name {{ learners_server_name }};
+  root        {{ learners_wwwroot }};
+
+  location / {
+    proxy_pass http://app_server;
+    include proxy_params;
+  }
+
+}
+
+# frontend
 server {
 {% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
   listen {{ learners_nginx_listen_ssl | default("443 ssl") }};
@@ -23,11 +49,14 @@ server {
 {% endif %}
 
   server_name {{ learners_server_name }};
-  root        {{ learners_wwwroot }};
+  root        /var/www/html/learners;
+  index   index.html;
 
   location / {
-    proxy_pass http://app_server;
-    include proxy_params;
+        root /var/www/html/learners;
+        try_files $uri  /index.html;
   }
+  error_log  /var/log/nginx/learners-frontend-error.log;
+  access_log /var/log/nginx/learners-frontend-access.log;
 
 }

@@ -1,0 +1,49 @@
+---
+- name: Copying service-template to server
+  become: true
+  ansible.builtin.template:
+      src: templates/learners.service.j2
+      dest: /etc/systemd/system/learners.service
+      mode: preserve
+
+- name: Install build modules
+  become: true
+  become_user: '{{ learners_user }}'
+  ansible.builtin.pip:
+      name: [setuptools, wheel, build]
+
+- name: Install learners in virtualenv
+  become: true
+  become_user: '{{ learners_user }}'
+  ansible.builtin.pip:
+      name: 'https://github.com/ait-cs-IaaS/learners/archive/refs/heads/vue-frontend.zip'
+      virtualenv: '{{ learners_basepath }}/venv'
+      virtualenv_command: python3.9 -m venv
+
+- name: Write config
+  become: true
+  ansible.builtin.template:
+      owner: '{{ learners_user }}'
+      group: '{{ learners_user }}'
+      src: templates/config.yml.j2
+      dest: '{{ learners_basepath }}/config.yml'
+      mode: preserve
+  notify: Restart learners
+
+- name: Create uploads folder {{ learners_config_learners.upload_folder }}
+  become: true
+  ansible.builtin.file:
+      path: '{{ learners_config_learners.upload_folder }}'
+      owner: '{{ learners_user }}'
+      group: '{{ learners_user }}'
+      mode: '0755'
+      state: directory
+  when: learners_config_learners.upload_folder is defined
+
+- name: Start learners service
+  ansible.builtin.systemd:
+      name: learners.service
+      state: restarted
+      enabled: true
+      daemon_reload: true
+  become: true

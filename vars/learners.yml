@@ -1,13 +1,16 @@
 ---
 learners_socket_path: /var/run/learners/learners.sock
-learners_install_path: "{{ learners_basepath }}/venv/lib/python3.{{ ansible_python.version.minor }}/site-packages/learners"
+learners_install_path: "{{ learners_basepath }}/vue/venv/lib/python3.9/site-packages/learners"
 
 flask_service_execstart: >
   {{ learners_basepath }}/venv/bin/gunicorn
-  learners:app
+  backend:app
   --bind unix:{{ learners_socket_path }}
-  --pythonpath={{ learners_basepath }}/venv/lib/python3
+  --pythonpath={{ learners_basepath }}/venv/lib/python3.9
+  --worker-class gevent
 
 learners_packages:
-  - python3-venv
+  - python3.9-venv
   - nginx
+  - python3.9
+  - python3-pip

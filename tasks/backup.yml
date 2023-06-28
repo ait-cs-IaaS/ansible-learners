@@ -2,7 +2,9 @@
 - name: Backup current datebase
   become: true
   ansible.builtin.fetch:
-    src: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
-    dest: "{{ learners_local_directory }}/backup/learners_db_{{ ansible_date_time.date }}_{{ ansible_date_time.time }}.db"
-    fail_on_missing: false
-    flat: true
+      src: "{{ (learners_config_database.db_uri | split('sqlite:///'))[1] }}"
+      dest:
+          '{{ learners_local_directory }}/backup/learners_db_{{
+          ansible_date_time.date }}_{{ ansible_date_time.time }}.db'
+      fail_on_missing: false
+      flat: true

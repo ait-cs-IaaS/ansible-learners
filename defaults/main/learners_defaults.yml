@@ -27,8 +27,10 @@ learners_nginx_ssl_cert: ""
 learners_nginx_ssl_key: ""
 
 learners_packages:
-  - python3-venv
+  - python3.9-venv
   - nginx
+  - python3.9
+  - python3-pip
 
 # learners_branding:
 #   login: True

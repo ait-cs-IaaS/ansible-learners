@@ -1,6 +1,6 @@
 ---
-learners_wwwroot: "{{ learners_basepath }}/webroot"
-learners_uploaddir: "{{ learners_wwwroot }}/uploads"
+learners_wwwroot: '{{ learners_basepath }}/webroot'
+learners_uploaddir: '{{ learners_wwwroot }}/uploads'
 
 exercise_force_rebuild: true
 
@@ -8,7 +8,6 @@ hugo_install_url: https://github.com/gohugoio/hugo/releases/download/v0.104.3/hu
 
 exercises_packages: []
 
-# learners_exercise_params:
-#   - {name: ben, params: {name: "Franz Joseph Karl, aus dem Haus Habsburg-Lothringen"}}
-#   - {name: test, params: {name: Elisabeth Amalie Eugenie von Wittelsbach}}
-#   - {name: user3, params: {name: Kimberly Ann Hart}}
+learners_packages:
+    - python3.9
+    - python3-pip
