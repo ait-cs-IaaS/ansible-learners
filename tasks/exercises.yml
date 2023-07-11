@@ -82,24 +82,3 @@
   delay: 5
   until: "'goroutine' not in build_status.stdout_lines"
   notify: Restart learners
-
-- name: Check Subdirectories existence
-  ansible.builtin.stat:
-    path: "{{ learners_wwwroot }}/hugo/base/en/{{ item }}"
-  register: dir_check
-  loop: "{{ learners_default_content }}"
-
-- name: Create tabs default object
-  ansible.builtin.set_fact:
-    content_present_in_repo: "{{ content_present_in_repo | default({}) | combine({item.item: item.stat.exists}) }}"
-  loop: "{{ dir_check.results }}"
-
-- name: Write config
-  become: true
-  ansible.builtin.template:
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    src: templates/config.yml.j2
-    dest: "{{ learners_basepath }}/config.yml"
-    mode: preserve
-  notify: Restart learners

@@ -40,15 +40,18 @@
     dest: /etc/systemd/system/learners.service
     mode: preserve
 
-- name: Clone and configure exercises
-  ansible.builtin.include_tasks: exercises.yml
-  tags: [exercises]
 - name: Install learners frontend
+  tags: [learners]
   ansible.builtin.include_tasks: learners_frontend.yml
-  tags: [learners]
+
+- name: Clone and configure exercises
+  tags: [exercises]
+  ansible.builtin.include_tasks: exercises.yml
+
 - name: Install learners backend
-  ansible.builtin.include_tasks: learners_backend.yml
   tags: [learners]
+  ansible.builtin.include_tasks: learners_backend.yml
+
 - name: Configure nginx
-  ansible.builtin.include_tasks: nginx.yml
   tags: [nginx]
+  ansible.builtin.include_tasks: nginx.yml

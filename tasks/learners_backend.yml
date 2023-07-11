@@ -11,6 +11,7 @@
   become_user: "{{ learners_user }}"
   ansible.builtin.pip:
     name: [setuptools, wheel, build]
+
 - name: Install learners in virtualenv
   become: true
   become_user: "{{ learners_user }}"
@@ -18,6 +19,17 @@
     name: https://github.com/ait-cs-IaaS/learners/archive/refs/heads/vue-frontend.zip
     virtualenv: "{{ learners_basepath }}/venv"
     virtualenv_command: python3.9 -m venv
+
+- name: Check Subdirectories existence
+  ansible.builtin.stat:
+    path: "{{ learners_wwwroot }}/hugo/base/en/{{ item }}"
+  register: dir_check
+  loop: "{{ learners_default_content }}"
+
+- name: Create tabs default object
+  ansible.builtin.set_fact:
+    content_present_in_repo: "{{ content_present_in_repo | default({}) | combine({item.item: item.stat.exists}) }}"
+  loop: "{{ dir_check.results }}"
 
 - name: Write config
   become: true
