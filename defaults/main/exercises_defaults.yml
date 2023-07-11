@@ -10,3 +10,8 @@ exercises_packages: []
 learners_packages:
   - python3.9
   - python3-pip
+
+learners_default_content:
+  - documentation
+  - exercises
+  - presentations
