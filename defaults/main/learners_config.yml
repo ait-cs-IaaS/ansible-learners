@@ -10,6 +10,7 @@ learners_config_statics:
 
 learners_config_exercise_json: "{{ learners_wwwroot }}/hugo/exercises.json"
 learners_config_questionaire_json: "{{ learners_wwwroot }}/hugo/questionaires.json"
+learners_config_page_json: "{{ learners_wwwroot }}/hugo/pages.json"
 
 learners_users:
   user1:

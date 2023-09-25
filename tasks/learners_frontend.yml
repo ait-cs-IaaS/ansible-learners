@@ -5,7 +5,7 @@
   ansible.builtin.git:
     repo: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners.git
     dest: "{{ learners_basepath }}"
-    version: vue-frontend
+    version: "{{ learners_backend_branch }}"
     accept_hostkey: true
     single_branch: true
     recursive: false
@@ -13,6 +13,15 @@
     depth: 1
   environment:
     GIT_TERMINAL_PROMPT: "0"
+
+- name: Write config
+  become: true
+  ansible.builtin.template:
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    src: templates/config.yml.j2
+    dest: "{{ learners_basepath }}/config.yml"
+    mode: preserve
 
 - name: Gather the package facts
   ansible.builtin.package_facts:
@@ -92,6 +101,6 @@
   become: true
   ansible.builtin.template:
     src: nginx_learners.conf.j2
-    dest: /etc/nginx/sites-enabled/learners.conf
+    dest: /etc/nginx/conf.d/learners.conf
     mode: "0644"
   notify: Restart nginx

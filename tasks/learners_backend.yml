@@ -16,7 +16,7 @@
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.pip:
-    name: https://github.com/ait-cs-IaaS/learners/archive/refs/heads/vue-frontend.zip
+    name: "https://github.com/ait-cs-IaaS/learners/archive/refs/heads/{{ learners_backend_branch }}.zip"
     virtualenv: "{{ learners_basepath }}/venv"
     virtualenv_command: python3.9 -m venv
 
@@ -30,16 +30,6 @@
   ansible.builtin.set_fact:
     content_present_in_repo: "{{ content_present_in_repo | default({}) | combine({item.item: item.stat.exists}) }}"
   loop: "{{ dir_check.results }}"
-
-- name: Write config
-  become: true
-  ansible.builtin.template:
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    src: templates/config.yml.j2
-    dest: "{{ learners_basepath }}/config.yml"
-    mode: preserve
-  notify: Restart learners
 
 - name: Create uploads folder {{ learners_config_learners.upload_folder }}
   become: true

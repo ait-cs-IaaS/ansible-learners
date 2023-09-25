@@ -21,12 +21,9 @@ novnc:
 
 # TABS -----------------------------------------------------------------------------
 
+{% if learners_config_tabs is defined %}
 tabs:
-  standard:
-    {{ (learners_config_tabs.standard | default(content_present_in_repo)) | to_nice_yaml(indent=4) | trim | indent(4) }}
-{% if learners_config_tabs.staticsites is defined %}
-  staticsites:
-    {{ (learners_config_tabs.staticsites | to_nice_yaml(indent=2)) | trim | indent(4) }}
+  {{ (learners_config_tabs | to_nice_yaml(indent=2)) | trim | indent(2) }}
 {% endif %}
 
 # PATHS ----------------------------------------------------------------------------
@@ -47,6 +44,10 @@ exercise_json: {{ learners_config_exercise_json }}
 questionaire_json: {{ learners_config_questionaire_json }}
 {% endif %}
 
+{% if learners_config_page_json is defined %}
+page_json: {{ learners_config_page_json }}
+{% endif %}
+
 # VENJIX ---------------------------------------------------------------------------
 
 {% if learners_config_venjix is defined %}
@@ -65,3 +66,4 @@ init_notifications:
 
 users:
   {{ learners_users | to_nice_yaml(indent=2) | trim | indent(2) }}
+

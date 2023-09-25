@@ -14,6 +14,21 @@
   environment:
     GIT_TERMINAL_PROMPT: "0"
 
+- name: Remove themes folder
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_exercise_build_path }}/themes/learners/"
+    state: absent
+
+- name: Ensure themes folder exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_exercise_build_path }}/themes/learners/"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+    mode: "0755"
+    state: directory
+
 - name: Clone Theme
   become: true
   become_user: "{{ learners_user }}"
@@ -73,7 +88,7 @@
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.command:
-    cmd: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }}"
+    cmd: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }} -c {{ learners_basepath }}/config.yml -t false"
   args:
     chdir: "{{ learners_exercise_build_path }}"
     creates: "{{ learners_wwwroot }}/hugo/base"
