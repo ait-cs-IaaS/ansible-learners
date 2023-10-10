@@ -1,0 +1,72 @@
+---
+learners_user: learners
+
+learners_basepath: /opt/learners
+learners_wwwroot: "{{ learners_basepath }}/webroot"
+learners_uploaddir: "{{ learners_wwwroot }}/uploads"
+
+learners_db_preserve: true
+
+learners_server_name: learners.cyberrange.rocks
+learners_url: https://{{ learners_server_name }}
+learners_venjix_url: https://venjix.cyberrange
+learners_novnc_url: https://novnc.cyberrange.rocks
+
+learners_github_pat: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') }}"
+learners_exercise_build_path: "{{ learners_basepath }}/exercise_repository"
+
+learners_exercise_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_exercises.git
+learners_exercise_branch: master
+
+learners_theme_repository: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners_theme.git
+learners_theme_branch: master
+
+learners_nginx_ssl_cert: ""
+learners_nginx_ssl_key: ""
+
+learners_packages:
+  - python3.9
+  - python3.9-venv
+  - python3-pip
+  - nginx
+
+hugo_install_url: https://github.com/gohugoio/hugo/releases/download/v0.104.3/hugo_0.104.3_linux-amd64.deb
+
+# CONFIG defaults
+
+learners_config_jwt:
+  jwt_secret_key: "{{ 42 | to_uuid }}"
+
+learners_config_database:
+  db_uri: sqlite:///{{ learners_basepath }}/data.db
+
+learners_config_statics:
+  directory: "{{ learners_wwwroot }}"
+
+learners_users:
+  user1:
+    password: user1
+    vnc_clients:
+      soc_client:
+        target: placeholder_1
+        tooltip: SOC client
+        username: csirt1
+        password: placeholder
+      pps_client:
+        target: placeholder_3
+        tooltip: PPS client
+        username: csirt3
+        password: placeholder
+  user2:
+    password: user2
+    vnc_clients:
+      soc_client:
+        target: placeholder_1
+        tooltip: SOC client
+        username: csirt1
+        password: placeholder
+      pps_client:
+        target: placeholder_3
+        tooltip: PPS client
+        username: csirt3
+        password: placeholder

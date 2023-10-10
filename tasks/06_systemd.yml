@@ -1,0 +1,8 @@
+---
+- name: Copying service-template to server
+  become: true
+  ansible.builtin.template:
+    src: templates/learners.service.j2
+    dest: /etc/systemd/system/learners.service
+    mode: preserve
+  notify: Start and enable learners

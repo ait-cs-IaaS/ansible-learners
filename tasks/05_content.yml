@@ -56,39 +56,11 @@
     - color: success-color
       value: "{{ learners_config_learners.theme.success | default('#6cbd8e') }}"
 
-- name: Ensure exercises build packages are installed
-  become: true
-  ansible.builtin.package:
-    name: "{{ exercises_packages }}"
-    state: present
-    update_cache: true
-
-- name: Ensure hugo is installed
-  become: true
-  ansible.builtin.apt:
-    deb: "{{ hugo_install_url }}"
-
-- name: Create {{ learners_wwwroot }}
-  become: true
-  ansible.builtin.file:
-    path: "{{ learners_wwwroot }}"
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    mode: "0755"
-    state: directory
-
-- name: Remove build flag
-  become: true
-  ansible.builtin.file:
-    path: "{{ learners_wwwroot }}/hugo/base"
-    state: absent
-  when: exercise_force_rebuild
-
 - name: Build static content
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.command:
-    cmd: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }} -c {{ learners_basepath }}/config.yml -t false"
+    cmd: "{{ learners_exercise_build_path }}/build.py -d {{ learners_wwwroot }} -c {{ learners_basepath }}/config.yml"
   args:
     chdir: "{{ learners_exercise_build_path }}"
     creates: "{{ learners_wwwroot }}/hugo/base"

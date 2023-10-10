@@ -1,0 +1,20 @@
+---
+- name: Check github pat
+  ansible.builtin.debug:
+    msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
+  when: learners_github_pat == ""
+
+- name: Clone Learners to {{ learners_basepath }}
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.git:
+    repo: https://{{ learners_github_pat }}@github.com/ait-cs-IaaS/learners.git
+    dest: "{{ learners_basepath }}"
+    version: "{{ learners_backend_branch }}"
+    accept_hostkey: true
+    single_branch: true
+    recursive: false
+    force: true
+    depth: 1
+  environment:
+    GIT_TERMINAL_PROMPT: "0"

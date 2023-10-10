@@ -1,0 +1,25 @@
+---
+- name: Set .env for frontend
+  become: true
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ learners_basepath }}/frontend/.env"
+    mode: "0644"
+    owner: "{{ learners_user }}"
+    group: "{{ learners_user }}"
+
+- name: Build project
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.command:
+    cmd: yarn build
+    chdir: "{{ learners_basepath }}/frontend"
+  changed_when: false
+
+- name: Copy build to live directory
+  become: true
+  ansible.builtin.copy:
+    src: "{{ learners_basepath }}/frontend/dist/"
+    dest: /var/www/html/learners
+    mode: "755"
+    remote_src: true

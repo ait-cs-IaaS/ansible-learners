@@ -36,18 +36,6 @@ statics:
   {{ learners_config_statics | to_nice_yaml(indent=2) | trim | indent(2) }}
 {% endif %}
 
-{% if learners_config_exercise_json is defined %}
-exercise_json: {{ learners_config_exercise_json }}
-{% endif %}
-
-{% if learners_config_questionaire_json is defined %}
-questionaire_json: {{ learners_config_questionaire_json }}
-{% endif %}
-
-{% if learners_config_page_json is defined %}
-page_json: {{ learners_config_page_json }}
-{% endif %}
-
 # VENJIX ---------------------------------------------------------------------------
 
 {% if learners_config_venjix is defined %}

@@ -1,57 +1,24 @@
 ---
-- name: Load default vars
-  ansible.builtin.include_vars: learners.yml
+- name: "00 bootstrap"
+  ansible.builtin.include_tasks: 00_bootstrap.yml
 
-- name: Check github pat
-  ansible.builtin.debug:
-    msg: GITHUB PAT ist unset please set `learners_github_pat` or set env `GITHUB_PAT`
-  when: learners_github_pat == ""
+- name: "01 clone repo"
+  ansible.builtin.include_tasks: 01_clone_repo.yml
 
-# Bootstrap
+- name: "02 install dependencies"
+  ansible.builtin.include_tasks: 02_dependencies.yml
 
-- name: Ensure learners build packages are installed
-  become: true
-  ansible.builtin.package:
-    name: "{{ learners_packages }}"
-    state: present
-    update_cache: true
+- name: "03 frontend"
+  ansible.builtin.include_tasks: 03_frontend.yml
 
-- name: Create learners user
-  become: true
-  ansible.builtin.user:
-    name: "{{ learners_user }}"
-    home: "{{ learners_basepath }}"
-    shell: /usr/sbin/nologin
-    create_home: false
+- name: "04 backend"
+  ansible.builtin.include_tasks: 04_backend.yml
 
-- name: Create {{ learners_basepath }}
-  become: true
-  ansible.builtin.file:
-    path: "{{ learners_basepath }}"
-    owner: "{{ learners_user }}"
-    group: "{{ learners_user }}"
-    mode: "0755"
-    state: directory
+- name: "05 content"
+  ansible.builtin.include_tasks: 05_content.yml
 
-- name: Copying service-template to server
-  become: true
-  ansible.builtin.template:
-    src: templates/learners.service.j2
-    dest: /etc/systemd/system/learners.service
-    mode: preserve
+- name: "06 systemd"
+  ansible.builtin.include_tasks: 06_systemd.yml
 
-- name: Install learners frontend
-  tags: [learners]
-  ansible.builtin.include_tasks: learners_frontend.yml
-
-- name: Clone and configure exercises
-  tags: [exercises]
-  ansible.builtin.include_tasks: exercises.yml
-
-- name: Install learners backend
-  tags: [learners]
-  ansible.builtin.include_tasks: learners_backend.yml
-
-- name: Configure nginx
-  tags: [nginx]
-  ansible.builtin.include_tasks: nginx.yml
+- name: "07 nginx"
+  ansible.builtin.include_tasks: 07_nginx.yml

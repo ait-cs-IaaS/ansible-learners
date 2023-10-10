@@ -1,0 +1,60 @@
+---
+- name: Install build modules
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.pip:
+    name: [setuptools, wheel, build]
+
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Get Nodejs version
+  ansible.builtin.set_fact:
+    node_version: "{{ (ansible_facts.packages['nodejs'][0]['version'].split('.')[:2] | join('.')) | default('0.0') }}"
+  when: "'nodejs' in ansible_facts.packages"
+
+- name: Install Nodejs 19.x
+  when: ((node_version | default('0.0')) | float) < 19.0
+  become: true
+  block:
+    - name: Download node setup file
+      ansible.builtin.get_url:
+        url: https://deb.nodesource.com/setup_19.x
+        dest: /tmp/setup_19.sh
+        owner: "{{ learners_user }}"
+        group: "{{ learners_user }}"
+        mode: a+x
+
+    - name: Execute node install script
+      ansible.builtin.command:
+        cmd: /tmp/setup_19.sh
+      changed_when: false
+
+    - name: Install node 19.x via apt
+      ansible.builtin.apt:
+        name: nodejs
+
+    - name: Remove temporary file
+      ansible.builtin.file:
+        path: /tmp/setup_19.sh
+        state: absent
+
+- name: Install yarn
+  become: true
+  community.general.npm:
+    name: yarn
+    global: true
+
+- name: Install frontend dependencies
+  become: true
+  become_user: "{{ learners_user }}"
+  ansible.builtin.command:
+    cmd: yarn install
+    chdir: "{{ learners_basepath }}/frontend"
+  changed_when: false
+
+- name: Ensure hugo is installed
+  become: true
+  ansible.builtin.apt:
+    deb: "{{ hugo_install_url }}"

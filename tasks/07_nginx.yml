@@ -1,0 +1,22 @@
+---
+- name: Remove default config
+  become: true
+  ansible.builtin.file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+
+- name: Ensure /etc/nginx/conf.d exists
+  become: true
+  ansible.builtin.file:
+    path: "/etc/nginx/conf.d"
+    state: directory
+    owner: root
+    group: root
+
+- name: Add NGINX configuration file
+  become: true
+  ansible.builtin.template:
+    src: nginx_learners.conf.j2
+    dest: /etc/nginx/conf.d/learners.conf
+    mode: "0644"
+  notify: Restart nginx
