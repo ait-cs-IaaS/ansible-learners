@@ -12,6 +12,7 @@
     state: directory
     owner: root
     group: root
+    mode: "0755"
 
 - name: Add NGINX configuration file
   become: true
