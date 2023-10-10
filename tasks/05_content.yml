@@ -1,4 +1,10 @@
 ---
+- name: Remove content folder
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_exercise_build_path }}"
+    state: absent
+
 - name: Clone Exercise to {{ learners_exercise_build_path }}
   become: true
   become_user: "{{ learners_user }}"
