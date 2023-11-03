@@ -15,6 +15,15 @@
     src: templates/config.yml.j2
     dest: "{{ learners_basepath }}/config.yml"
     mode: preserve
+  when: learners_static_config is not defined
+
+- name: Copy static learners config
+  become: true
+  ansible.builtin.copy:
+    dest: "{{ learners_basepath }}/config.yml"
+    src: "{{ learners_static_config }}"
+    mode: "0755"
+  when: learners_static_config is defined
 
 - name: Create uploads folder {{ learners_config_learners.upload_folder }}
   become: true
