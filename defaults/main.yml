@@ -12,6 +12,8 @@ learners_url: https://{{ learners_server_name }}
 learners_venjix_url: https://venjix.cyberrange
 learners_novnc_url: https://novnc.cyberrange.rocks
 
+learners_drawio_server_name: drawio.cyberrange.rocks
+
 learners_github_pat: "{{ lookup('ansible.builtin.env', 'GITHUB_PAT') }}"
 learners_exercise_build_path: "{{ learners_basepath }}/exercise_repository"
 
@@ -31,6 +33,10 @@ learners_packages:
   - nginx
 
 hugo_install_url: https://github.com/gohugoio/hugo/releases/download/v0.104.3/hugo_0.104.3_linux-amd64.deb
+
+learners_external_apps:
+  - location: drawio
+    server: https://app.diagrams.net:443
 
 # CONFIG defaults
 
