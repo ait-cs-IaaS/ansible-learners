@@ -22,3 +22,6 @@
 
 - name: "07 nginx"
   ansible.builtin.include_tasks: 07_nginx.yml
+
+- name: "08 restart"
+  ansible.builtin.include_tasks: 08_restart.yml

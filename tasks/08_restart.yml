@@ -1,0 +1,12 @@
+---
+- name: Restart learners
+  become: true
+  ansible.builtin.service:
+    name: learners
+    state: restarted
+
+- name: Restart nginx
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
