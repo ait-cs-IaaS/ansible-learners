@@ -13,6 +13,39 @@ server {
 }
 {% endif %}
 
+
+server {
+{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
+  listen {{ learners_nginx_listen_ssl | default("443 ssl") }};
+  ssl_certificate     {{ learners_nginx_ssl_cert }};
+  ssl_certificate_key {{ learners_nginx_ssl_key }};
+{% else %}
+  listen {{ learners_nginx_listen | default("80") }};
+{% endif %}
+
+  server_name {{ learners_server_name }};
+
+  
+{% for external_app in learners_external_apps %}
+  location /{{ external_app.location }}/ {
+    proxy_pass {{ external_app.server }}/;
+    proxy_ssl_server_name on;
+    proxy_hide_header Content-Security-Policy;
+    proxy_hide_header X-Frame-Options;
+  }
+{% endfor %}
+
+
+  location / {
+        root /var/www/html/learners;
+        try_files $uri  /index.html;
+  }
+  error_log  /var/log/nginx/learners-frontend-error.log;
+  access_log /var/log/nginx/learners-frontend-access.log;
+
+}
+
+
 # backend
 server {
   listen  5000 ssl;
@@ -35,28 +68,5 @@ server {
     proxy_pass http://app_server;
     include proxy_params;
   }
-
-}
-
-# frontend
-server {
-{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
-  listen {{ learners_nginx_listen_ssl | default("443 ssl") }};
-  ssl_certificate     {{ learners_nginx_ssl_cert }};
-  ssl_certificate_key {{ learners_nginx_ssl_key }};
-{% else %}
-  listen {{ learners_nginx_listen | default("80") }};
-{% endif %}
-
-  server_name {{ learners_server_name }};
-  root        /var/www/html/learners;
-  index   index.html;
-
-  location / {
-        root /var/www/html/learners;
-        try_files $uri  /index.html;
-  }
-  error_log  /var/log/nginx/learners-frontend-error.log;
-  access_log /var/log/nginx/learners-frontend-access.log;
 
 }
