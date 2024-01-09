@@ -2,29 +2,25 @@ upstream app_server {
   server unix:{{ learners_socket_path }};
 }
 
-{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
 server {
+
+  # Redirect to SSL
   listen {{ learners_nginx_listen | default("80") }};
   server_name {{ learners_server_name }};
 
   location / {
     return 301 https://$host$request_uri;
   }
-}
-{% endif %}
 
+}
 
 server {
-{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
+
   listen {{ learners_nginx_listen_ssl | default("443 ssl") }};
   ssl_certificate     {{ learners_nginx_ssl_cert }};
   ssl_certificate_key {{ learners_nginx_ssl_key }};
-{% else %}
-  listen {{ learners_nginx_listen | default("80") }};
-{% endif %}
 
   server_name {{ learners_server_name }};
-
   
 {% for external_app in learners_external_apps %}
   location /{{ external_app.location }}/ {
@@ -35,38 +31,28 @@ server {
   }
 {% endfor %}
 
-
+  # frontend
   location / {
-        root /var/www/html/learners;
-        try_files $uri  /index.html;
+    root /var/www/html/learners;
+    try_files $uri  /index.html;
   }
+
+  # backend
+  location /api/ {
+    proxy_pass http://app_server/;
+    proxy_read_timeout 86400;
+    proxy_set_header Connection '';
+    proxy_http_version 1.1;
+    chunked_transfer_encoding off;
+    proxy_buffering off;
+    proxy_cache off;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
   error_log  /var/log/nginx/learners-frontend-error.log;
   access_log /var/log/nginx/learners-frontend-access.log;
-
-}
-
-
-# backend
-server {
-  listen  5000 ssl;
-{% if learners_nginx_ssl_cert and learners_nginx_ssl_key %}
-  ssl_certificate     {{ learners_nginx_ssl_cert }};
-  ssl_certificate_key {{ learners_nginx_ssl_key }};
-{% endif %}
-
-  proxy_read_timeout 24h;
-  proxy_set_header Connection '';
-  proxy_http_version 1.1;
-  chunked_transfer_encoding off;
-  proxy_buffering off;
-  proxy_cache off;
-
-  server_name {{ learners_server_name }};
-  root        {{ learners_wwwroot }};
-
-  location / {
-    proxy_pass http://app_server;
-    include proxy_params;
-  }
 
 }
