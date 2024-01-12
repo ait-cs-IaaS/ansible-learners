@@ -9,6 +9,7 @@ learners_db_preserve: true
 
 learners_server_name: learners.cyberrange.rocks
 learners_url: https://{{ learners_server_name }}
+learners_url_basepath: api/
 learners_venjix_url: https://venjix.cyberrange
 learners_novnc_url: https://novnc.cyberrange.rocks
 

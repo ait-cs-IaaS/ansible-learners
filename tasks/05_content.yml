@@ -62,11 +62,17 @@
     - color: success-color
       value: "{{ learners_config_learners.theme.success | default('#6cbd8e') }}"
 
+- name: Remove build flag
+  become: true
+  ansible.builtin.file:
+    path: "{{ learners_wwwroot }}/hugo/base"
+    state: absent
+
 - name: Build static content
   become: true
   become_user: "{{ learners_user }}"
   ansible.builtin.command:
-    cmd: "./build.py -d {{ learners_wwwroot }} -c {{ learners_basepath }}/config.yml -o False"
+    cmd: "./build.py -d {{ learners_wwwroot }} -c {{ learners_basepath }}/config.yml -o False -b {{ learners_url_basepath }}"
   args:
     chdir: "{{ learners_exercise_build_path }}/themes/learners"
     creates: "{{ learners_wwwroot }}/hugo/base"
